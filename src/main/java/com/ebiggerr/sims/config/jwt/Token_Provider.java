@@ -17,9 +17,58 @@
 
 package com.ebiggerr.sims.config.jwt;
 
-public class Token_Provider {
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.stereotype.Service;
 
-    //https://auth0.com/blog/implementing-jwt-authentication-on-spring-boot/
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+import java.util.stream.Collectors;
+
+@Service
+@PropertySource(value = {"classpath:application-dev.properties"})
+public class Token_Provider extends JWT {
+
+    @Value("${secretsigningKey}")
+    private String privatekey;
+
+    Algorithm algorithm = Algorithm.HMAC256(privatekey);
+
+    public String generateToken(Authentication authentication){
+
+        final String authorities= authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+
+        Instant nowEp = Instant.now();
+
+        Date now = Date.from(nowEp);
+
+        // 30 minutes Expiration Duration
+        Date exp = Date.from(nowEp.plus(30, ChronoUnit.MINUTES));
+
+
+        try{
+            String token = JWT.create().withIssuedAt(now)
+                    .withSubject(authentication.getName())
+                    .withClaim("AUTHORITIES_KEY",authorities)
+                    .withExpiresAt(exp)
+                    .sign(algorithm);
+
+            return token;
+
+        }catch (JWTCreationException exception){
+
+        }
+
+        return null;
+    }
+
+
 
 
 }
