@@ -20,6 +20,9 @@ package com.ebiggerr.sims.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 /*
@@ -45,22 +48,19 @@ public class accountauthentication {
     @JoinColumn(name = "accountid", nullable = false)
     private Set<accountrole> accRoles;
 
-    //private Long lastActive;
-
-    //private String statusAcount;
-
-    protected accountauthentication(){
+    public accountauthentication(){
         //no-arg constructor
     }
 
     public accountauthentication(String accountID,
                                  String accountUsername,
-                                 String accountPassword){
+                                 String accountPassword,
+                                 Set<accountrole> accRoles){
         this.accountID=accountID;
         this.accountUsername=accountUsername;
         this.accountPassword=accountPassword;
-        //this.lastActive=lastActive;
-        //this.accountStatus=accountStatus;
+        this.accRoles=accRoles;
+
     }
 
     public String getAccountID() {
@@ -102,6 +102,38 @@ public class accountauthentication {
                             + " with account ID of " + this.getAccountID()
                             + " and password of " + this.getAccountPassword()
                             + " and roles of " + this.getAccRoles().toString();
+    }
+
+    public accountAuthenticationDTO getAccountAuthenticationDTOFromEntity(){
+
+        accountAuthenticationDTO accountauthenticationDTO= new accountAuthenticationDTO();
+        accountauthenticationDTO.setAccountID(this.getAccountID());
+        accountauthenticationDTO.setAccountUsername(this.getAccountUsername());
+        accountauthenticationDTO.setAccountPassword(this.getAccountPassword());
+
+        Set<accountrole> accountRoleSet=this.getAccRoles();
+        Iterator<accountrole> accountRoleIterator = accountRoleSet.iterator();
+
+        accountrole temp = new accountrole();
+        int size = accountRoleSet.size();
+
+        Collection<String> roleList= new LinkedList<>();
+
+        for( int index=0; index < size ; index ++){
+
+            temp=accountRoleIterator.next();
+            //String accountRole_accountID = temp.getAccountID();
+            //String accountRole_roleID = temp.getRoleID();
+
+            roledetails roleDetails = temp.getRoleDetailsSet();
+            //String roleName=roledetails.getRoleName();
+
+            roleList.add( roleDetails.getRoleName() );
+        }
+
+        accountauthenticationDTO.setAccRoles(roleList);
+
+        return accountauthenticationDTO;
     }
 
 
