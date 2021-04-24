@@ -18,10 +18,14 @@
 package com.ebiggerr.sims.config.jwt;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -36,14 +40,15 @@ import java.util.stream.Collectors;
 public class Token_Provider extends JWT {
 
     @Value("${secretsigningKey}")
-    private String privatekey;
+    private String privateKey;
 
-    Algorithm algorithm = Algorithm.HMAC256(privatekey);
+    Algorithm algorithm = Algorithm.HMAC256(privateKey);
 
     public String generateToken(Authentication authentication){
 
         final String authorities= authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
+        //TODO
         Instant nowEp = Instant.now();
 
         Date now = Date.from(nowEp);
@@ -68,7 +73,26 @@ public class Token_Provider extends JWT {
         return null;
     }
 
+    public UsernamePasswordAuthenticationToken verifyAndDecodeToken(String token){
 
+
+
+        try {
+
+            JWTVerifier verifier = JWT.require(algorithm).build();
+
+            //verify and decode the token
+            DecodedJWT decodedJWT = verifier.verify(token);
+
+
+
+        }catch(JWTVerificationException jwtVerificationException){
+
+        }
+
+        //TODO
+        return null;
+    }
 
 
 }
