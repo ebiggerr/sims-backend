@@ -26,6 +26,43 @@ public class account {
     private Long lastActive;
     private String accountStatus;
 
+    public String getAccountID() {
+        return accountID;
+    }
 
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
 
+    public String getAccountUsername() {
+        return accountUsername;
+    }
+
+    public void setAccountUsername(String accountUsername) {
+        this.accountUsername = accountUsername;
+    }
+
+    public String getAccountPassword() {
+        return accountPassword;
+    }
+
+    public void setAccountPassword(String accountPassword) {
+        this.accountPassword = accountPassword;
+    }
+
+    public Long getLastActive() {
+        return lastActive;
+    }
+
+    public void setLastActive(Long lastActive) {
+        this.lastActive = lastActive;
+    }
+
+    public String getAccountStatus() {
+        return accountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        this.accountStatus = accountStatus;
+    }
 }
