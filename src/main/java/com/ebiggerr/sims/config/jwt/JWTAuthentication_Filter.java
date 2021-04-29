@@ -17,6 +17,7 @@
 
 package com.ebiggerr.sims.config.jwt;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,11 +30,26 @@ import java.io.IOException;
 @Component
 public class JWTAuthentication_Filter extends OncePerRequestFilter {
 
+    @Value("${jwt.header.string}")
+    public String HEADER_STRING;
+
+    @Value("${jwt.token.prefix}")
+    public String TOKEN_PREFIX;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        String header= request.getHeader(HEADER_STRING);
+        String username= null;
+        String authToken = null;
 
+        if ( header != null && header.startsWith(TOKEN_PREFIX)){
+            authToken = header.replace(TOKEN_PREFIX,"");
+
+            try{
+
+            }
+        }
 
     }
 }

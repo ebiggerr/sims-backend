@@ -42,6 +42,10 @@ public class Token_Provider extends JWT {
     @Value("${secretsigningKey}")
     private String privateKey;
 
+    @Value("${jwt.authorities.key}")
+    private String AUTHORITIES_KEY;
+
+
     Algorithm algorithm = Algorithm.HMAC256(privateKey);
 
     public String generateToken(Authentication authentication){
@@ -60,7 +64,7 @@ public class Token_Provider extends JWT {
         try{
             String token = JWT.create().withIssuedAt(now)
                     .withSubject(authentication.getName())
-                    .withClaim("AUTHORITIES_KEY",authorities)
+                    .withClaim(AUTHORITIES_KEY,authorities)
                     .withExpiresAt(exp)
                     .sign(algorithm);
 
