@@ -26,14 +26,13 @@ import com.ebiggerr.sims.domain.request.authenticationRequest;
 import com.ebiggerr.sims.service.account.accountAuthenticationService;
 import com.ebiggerr.sims.service.account.accountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -111,6 +110,29 @@ public class accountMainController {
         return new API_Response().Success();
     }
 
-    //@PostMapping(path = "register" )
+    @GetMapping(path="/account/details/{accountID}")
+    public API_Response getAccountDetails(@PathVariable String accountID){
+
+        return new API_Response().Success();
+    }
+
+    @PostMapping(path = "/account/updateRoles")
+    public API_Response updateRolesOfAnAccount( /* @RequestBody */  ){
+
+        return new API_Response().Success();
+    }
+
+    @PostMapping(path = "/account/remove")
+    public API_Response removeAnAccount( /* @RequestBody */  ){
+
+        return new API_Response().Success();
+    }
+
+    @PostMapping(path = "/account/approve")
+    public API_Response approveAnAccount( /* @RequestBody */  ){
+
+        return new API_Response().Success();
+    }
+
 
 }
