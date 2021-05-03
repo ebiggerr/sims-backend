@@ -18,6 +18,7 @@
 package com.ebiggerr.sims.config.jwt;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@PropertySource(value = {"classpath:application-dev.properties"})
 public class JWTAuthentication_Filter extends OncePerRequestFilter {
 
     @Value("${jwt.header.string}")
@@ -50,6 +52,8 @@ public class JWTAuthentication_Filter extends OncePerRequestFilter {
 
             }
         }
+
+        doFilter(request,response,filterChain);
 
     }
 }

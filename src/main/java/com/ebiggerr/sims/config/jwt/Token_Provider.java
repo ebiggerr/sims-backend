@@ -65,6 +65,7 @@ public class Token_Provider extends JWT {
             String token = JWT.create().withIssuedAt(now)
                     .withSubject(authentication.getName())
                     .withClaim(AUTHORITIES_KEY,authorities)
+                    //.withClaim()
                     .withExpiresAt(exp)
                     .sign(algorithm);
 
