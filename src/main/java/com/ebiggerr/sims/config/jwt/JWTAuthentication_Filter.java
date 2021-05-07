@@ -41,16 +41,18 @@ public class JWTAuthentication_Filter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String header= request.getHeader(HEADER_STRING);
+        String header= request.getHeader(this.HEADER_STRING);
         String username= null;
         String authToken = null;
 
-        if ( header != null && header.startsWith(TOKEN_PREFIX)){
-            authToken = header.replace(TOKEN_PREFIX,"");
+        if ( header != null && header.startsWith(this.TOKEN_PREFIX)){
+            authToken = header.replace(this.TOKEN_PREFIX,"");
 
-            try{
+            /*try{
 
-            }
+            }catch (Exception e){
+
+            }*/
         }
 
         doFilter(request,response,filterChain);

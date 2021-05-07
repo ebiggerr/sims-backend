@@ -23,6 +23,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,18 +40,18 @@ import java.util.stream.Collectors;
 @PropertySource(value = {"classpath:application-dev.properties"})
 public class Token_Provider extends JWT {
 
-    @Value("${secretsigningKey}")
+    @Value("${secret.signing.key}")
     private String privateKey;
 
     @Value("${jwt.authorities.key}")
     private String AUTHORITIES_KEY;
 
+    public String generateToken(accountAuthentication_UserDetails acc){
 
-    Algorithm algorithm = Algorithm.HMAC256(privateKey);
+        // TODO fix to get from application.properties
+        Algorithm algorithm = Algorithm.HMAC256("secret-signing-key");
 
-    public String generateToken(Authentication authentication){
-
-        final String authorities= authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+        final String authorities= acc.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
         //TODO
         Instant nowEp = Instant.now();
@@ -60,27 +61,25 @@ public class Token_Provider extends JWT {
         // 30 minutes Expiration Duration
         Date exp = Date.from(nowEp.plus(30, ChronoUnit.MINUTES));
 
-
         try{
-            String token = JWT.create().withIssuedAt(now)
-                    .withSubject(authentication.getName())
-                    .withClaim(AUTHORITIES_KEY,authorities)
-                    //.withClaim()
+            String token = JWT.create()
+                    .withClaim("username", acc.getUsername())
+                    .withClaim("roles",authorities)
+                    .withIssuedAt(now)
                     .withExpiresAt(exp)
                     .sign(algorithm);
-
             return token;
 
         }catch (JWTCreationException exception){
 
         }
-
         return null;
     }
 
     public UsernamePasswordAuthenticationToken verifyAndDecodeToken(String token){
 
-
+        // TODO fix to get from application.properties
+        Algorithm algorithm = Algorithm.HMAC256("secret-signing-key");
 
         try {
 
