@@ -17,5 +17,45 @@
 
 package com.ebiggerr.sims.config.jwt;
 
-public class JWTAuthentication_Filter {
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+@Component
+@PropertySource(value = {"classpath:application-dev.properties"})
+public class JWTAuthentication_Filter extends OncePerRequestFilter {
+
+    @Value("${jwt.header.string}")
+    public String HEADER_STRING;
+
+    @Value("${jwt.token.prefix}")
+    public String TOKEN_PREFIX;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        String header= request.getHeader(this.HEADER_STRING);
+        String username= null;
+        String authToken = null;
+
+        if ( header != null && header.startsWith(this.TOKEN_PREFIX)){
+            authToken = header.replace(this.TOKEN_PREFIX,"");
+
+            /*try{
+
+            }catch (Exception e){
+
+            }*/
+        }
+
+        doFilter(request,response,filterChain);
+
+    }
 }
