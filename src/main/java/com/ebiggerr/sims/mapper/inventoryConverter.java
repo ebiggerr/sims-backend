@@ -14,13 +14,12 @@ public class inventoryConverter {
         dto.setId(item.getId());
         dto.setSKU(item.getSKU());
         dto.setImagePath(item.getImagePath());
-        //append "-thumbnail" to the string
-        dto.setThumbnailImagePath(item.getImagePath());
+        dto.setThumbnailImagePath(item.getImagePath()); //append "-thumbnail" to the string
         dto.setItemName(item.getItemName());
         dto.setDimensions(item.getDimensions());
         dto.setVolume(item.getVolume());;
         dto.setItemDescription(item.getItemDescription());
-        dto.setUnitPrice(item.getUnitPrice());
+        dto.setUnitPrice( item.getUnitPrice() );
 
         return dto;
 
@@ -32,3 +31,4 @@ public class inventoryConverter {
 
     }
 }
+

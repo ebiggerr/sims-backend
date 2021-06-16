@@ -19,7 +19,7 @@ package com.ebiggerr.sims.domain.account;
 
 public class account {
 
-    private String accountID;
+   /* private String accountID;
     private String accountUsername;
     private String accountPassword;
 
@@ -64,5 +64,5 @@ public class account {
 
     public void setAccountStatus(String accountStatus) {
         this.accountStatus = accountStatus;
-    }
+    }*/
 }

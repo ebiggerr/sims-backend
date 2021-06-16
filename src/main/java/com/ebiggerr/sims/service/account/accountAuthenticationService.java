@@ -1,26 +1,27 @@
 package com.ebiggerr.sims.service.account;
 
-import com.ebiggerr.sims.domain.accountauthentication;
+import com.ebiggerr.sims.domain.accountAuthenticationDTO;
 import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
+import com.ebiggerr.sims.domain.accountauthentication;
+import com.ebiggerr.sims.mapper.accountauthenticationConverter;
+import com.ebiggerr.sims.repository.accountAuthenticationRepo;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.ebiggerr.sims.repository.accountAuthenticationRepo;
+import java.util.List;
 
-@Service
-public class accountAuthenticationService implements UserDetailsService {
+@Service //(value = "accountAuthenticationService")
+public class accountAuthenticationService implements UserDetailsService /*,UserService*/ {
 
-    //immutable
     private final accountAuthenticationRepo accountAuthenticationRepo;
+
+    private accountauthenticationConverter accMapper = new accountauthenticationConverter();
 
     //constructor-based dependency injection
    //@Autowired
     public accountAuthenticationService( accountAuthenticationRepo accountAuthenticationRepo){
-        this.accountAuthenticationRepo=accountAuthenticationRepo;
+        this.accountAuthenticationRepo = accountAuthenticationRepo;
     }
 
     /**
@@ -36,10 +37,10 @@ public class accountAuthenticationService implements UserDetailsService {
      *
      */
     @Override
-    public UserDetails loadUserByUsername(String accountUsername) {
+    public accountAuthentication_UserDetails loadUserByUsername(String accountUsername) {
 
         //returns an object with record from database using the data access methods in accountauthenticationRepo
-        accountauthentication accountauthentication= accountAuthenticationRepo.findaccountAutheticationWithAccountRolesAndRoleDetailsByAccountUsername(accountUsername);
+        accountauthentication accountauthentication = accountAuthenticationRepo.findaccountAutheticationWithAccountRolesAndRoleDetailsByAccountUsername(accountUsername);
 
         if( accountauthentication == null ){
             throw new UsernameNotFoundException("User Not Found.");
@@ -49,4 +50,25 @@ public class accountAuthenticationService implements UserDetailsService {
         return new accountAuthentication_UserDetails(accountauthentication);
 
     }
+
+    /**
+     * <h1>Retrieve information of all active AND approved accounts</h1>
+     *
+     * Information: UserID, Username, Authorities, Last Login and Last Active
+     *
+     * @return [List  &lt;accountAuthenticationDTO&gt; ] : List of all the active AND approved accounts
+     */
+    public List<accountAuthenticationDTO> getAllAccountInfoWithRoles(){
+
+        // mapping to DTO from entity to eliminate Sensitive credentials such as password
+        return accMapper.entitiesToDTO( accountAuthenticationRepo.getAll() );
+    }
+
+
+    //@Deprecated
+    /*
+    @Override
+    public accountauthentication findOne(String username) {
+        return accountAuthenticationRepo.findaccountAutheticationWithAccountRolesAndRoleDetailsByAccountUsername(username);
+    }*/
 }

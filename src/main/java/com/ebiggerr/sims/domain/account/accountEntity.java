@@ -17,10 +17,10 @@
 
 package com.ebiggerr.sims.domain.account;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /*
     An object that represents persistent data maintained in a database
@@ -31,19 +31,94 @@ public class accountEntity {
 
     @Id
     @Column(name="accountid")
+    //@GeneratedValue(strategy = GenerationType.SEQUENCE)
     private String accountID;
 
     @Column(name="accountusername")
     private String accountUsername;
 
+    @JsonIgnore
     @Column(name="accountpassword")
     private String accountPassword;
 
-    private Long lastActive;
+    @Column(name ="accountstatus")
+    private String AccountStatus;
 
-    private String accountStatus;
+    @Column(name = "lastactive", nullable = true)
+    private LocalDateTime lastActive;
 
+    @Column(name="lastlogin", nullable = true)
+    private LocalDateTime lastLogin;
 
+    public accountEntity(){
 
+    }
 
+    public accountEntity(String accountID, String accountUsername, String accountPassword, String accountStatus, LocalDateTime lastActive, LocalDateTime lastLogin) {
+        this.accountID = accountID;
+        this.accountUsername = accountUsername;
+        this.accountPassword = accountPassword;
+        AccountStatus = accountStatus;
+        this.lastActive = lastActive;
+        this.lastLogin = lastLogin;
+    }
+
+    /*   public account getAccountFromDTO(){
+
+        account acc=new account();
+        acc.setAccountID(accountID);
+        acc.setAccountUsername(accountUsername);
+        acc.setAccountPassword(accountPassword);
+
+        return acc;
+
+    }*/
+
+    public String getAccountID() {
+        return accountID;
+    }
+
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
+    }
+
+    public String getAccountUsername() {
+        return accountUsername;
+    }
+
+    public void setAccountUsername(String accountUsername) {
+        this.accountUsername = accountUsername;
+    }
+
+    public String getAccountPassword() {
+        return accountPassword;
+    }
+
+    public void setAccountPassword(String accountPassword) {
+        this.accountPassword = accountPassword;
+    }
+
+    public String getAccountStatus() {
+        return AccountStatus;
+    }
+
+    public void setAccountStatus(String accountStatus) {
+        AccountStatus = accountStatus;
+    }
+
+    public LocalDateTime getLastActive() {
+        return lastActive;
+    }
+
+    public void setLastActive(LocalDateTime lastActive) {
+        this.lastActive = lastActive;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 }

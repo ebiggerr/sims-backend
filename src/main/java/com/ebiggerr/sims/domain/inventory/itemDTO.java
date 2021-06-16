@@ -13,7 +13,7 @@ public class itemDTO {
     private String volume;
 
     private String itemDescription;
-    private String unitPrice;
+    private double unitPrice;
 
     public long getId() {
         return id;
@@ -36,7 +36,7 @@ public class itemDTO {
     }
 
     public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+        this.imagePath = "localhost:8080/"+imagePath;
     }
 
     public String getThumbnailImagePath() {
@@ -46,7 +46,7 @@ public class itemDTO {
     public void setThumbnailImagePath(String thumbnailImagePath) {
 
         String[] splits=thumbnailImagePath.split("\\.");
-        this.thumbnailImagePath= splits[0]+"-thumbnail."+splits[1];
+        this.thumbnailImagePath= "localhost:8080/"+ splits[0]+"-thumbnail."+splits[1];
     }
 
     public String getItemName() {
@@ -81,11 +81,11 @@ public class itemDTO {
         this.itemDescription = itemDescription;
     }
 
-    public String getUnitPrice() {
+    public double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(String unitPrice) {
+    public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
 }

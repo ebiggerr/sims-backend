@@ -64,11 +64,11 @@ public class roledetails {
         this.roleDescription = roleDescription;
     }
 
-    @Override
+   /* @Override
     public String toString(){
 
         return " The role ID is: " + this.getRoleID()
                 + " with role name of " + this.getRoleName();
 
-    };
+    };*/
 }

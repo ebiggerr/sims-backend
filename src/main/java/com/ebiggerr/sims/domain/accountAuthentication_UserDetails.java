@@ -4,20 +4,24 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 public class accountAuthentication_UserDetails implements UserDetails {
 
     //Entity
-    private final accountauthentication accountauthentication;
+    private accountauthentication accountauthentication;
 
-    private accountAuthenticationDTO accountAuthenticationDTO;
+    // private accountAuthenticationDTO accountAuthenticationDTO;
 
     public accountAuthentication_UserDetails(accountauthentication accountauthentication){
         this.accountauthentication=accountauthentication;
+    }
+
+    public accountauthentication getAccountAuthentication(){
+        return this.accountauthentication;
     }
 
     /**
@@ -27,9 +31,9 @@ public class accountAuthentication_UserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-        //TODO may have bug here in this method
-        accountAuthenticationDTO=this.accountauthentication.getAccountAuthenticationDTOFromEntity();
-        List<SimpleGrantedAuthority> authorities=new LinkedList<>();
+        accountauthentication acc=new accountauthentication();
+        accountAuthenticationDTO accountAuthenticationDTO = acc.getAccountAuthenticationDTOFromEntity(this.getAccountAuthentication());
+        List<SimpleGrantedAuthority> authorities=new ArrayList<>();
 
         Collection<String> list=accountAuthenticationDTO.getAccRoles();
         int size=list.size();
@@ -47,7 +51,7 @@ public class accountAuthentication_UserDetails implements UserDetails {
      * @return accountAuthenticationDTO
      */
     public accountAuthenticationDTO getAccountAuthenticationDTOFromUserDetails(){
-        return this.accountauthentication.getAccountAuthenticationDTOFromEntity();
+        return accountauthentication.getAccountAuthenticationDTOFromEntity(this.accountauthentication);
     }
 
     /**
@@ -56,7 +60,7 @@ public class accountAuthentication_UserDetails implements UserDetails {
      */
     @Override
     public String getPassword() {
-        return accountauthentication.getAccountPassword();
+        return this.accountauthentication.getAccountPassword();
     }
 
     /**
@@ -65,7 +69,7 @@ public class accountAuthentication_UserDetails implements UserDetails {
      */
     @Override
     public String getUsername() {
-        return accountauthentication.getAccountUsername();
+        return this.accountauthentication.getAccountUsername();
     }
 
     /**
@@ -74,7 +78,7 @@ public class accountAuthentication_UserDetails implements UserDetails {
      */
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     /**
@@ -83,7 +87,7 @@ public class accountAuthentication_UserDetails implements UserDetails {
      */
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     /**
@@ -92,7 +96,7 @@ public class accountAuthentication_UserDetails implements UserDetails {
      */
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     /**
@@ -101,6 +105,7 @@ public class accountAuthentication_UserDetails implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        return false;
+
+        return true;
     }
 }

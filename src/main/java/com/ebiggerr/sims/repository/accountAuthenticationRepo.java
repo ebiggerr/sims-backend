@@ -19,16 +19,51 @@ package com.ebiggerr.sims.repository;
 
 import com.ebiggerr.sims.domain.accountauthentication;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Repository
 public interface accountAuthenticationRepo extends JpaRepository<accountauthentication,String> {
 
-    @Query(value="SELECT aA.accountid,aA.accountusername,aA.accountpassword,aR.accountid,aR.roleid,rD.roleid,rD.rolename,rD.roledescription " +
-            "FROM accountauthentication aA INNER JOIN accountrole aR on aA.accountid = aR.accountid " +
-            "INNER JOIN roledetails rD on aR.roleid = rD.roleid " +
-            "WHERE aA.accountusername=?1",nativeQuery=true)
+
+
+    /**
+     * Return a list of @entity accountauthentication with the condition that the acccount having
+     * accountstatus of "APPROVED"
+     *
+     * @return [List] accountauthenticaion
+     */
+    @Query(value="SELECT aA.accountid,aA.accountusername,aA.accountpassword,aA.lastlogin,aA.lastactive,aR.accountid,aR.roleid,rD.roleid,rD.rolename,rD.roledescription " +
+            "FROM accountauthentication aA INNER JOIN accountrole aR on aA.accountid=aR.accountid " +
+            "INNER JOIN roledetails rD on aR.roleid=rD.roleid " +
+            "WHERE aA.accountstatus='APPROVED'",nativeQuery=true)
+    List<accountauthentication> getAll();
+
+    /**
+     * Return one @entity accountauthentication with the condition of matching username with
+     * given username and the accountstatus is "APPROVED"
+     * @param accountUsername username
+     * @return [accountauthentication] @entity with matching username and accountstatus of "APPROVED"
+     */
+    @Query(value="SELECT aA.accountid,aA.accountusername,aA.accountpassword,aA.lastlogin,aA.lastactive,aR.accountid,aR.roleid,rD.roleid,rD.rolename,rD.roledescription " +
+            "FROM accountauthentication aA INNER JOIN accountrole aR on aA.accountid=aR.accountid " +
+            "INNER JOIN roledetails rD on aR.roleid=rD.roleid " +
+            "WHERE aA.accountstatus='APPROVED' AND aA.accountusername=?",nativeQuery=true)
     accountauthentication findaccountAutheticationWithAccountRolesAndRoleDetailsByAccountUsername(String accountUsername);
+
+
+    /**
+     *  Update the accountstatus of matching record to "APPROVED"
+     * @param username username of account
+     */
+    @Modifying
+    @Transactional
+    @Query( value="UPDATE accountauthentication SET accountstatus='APPROVED' WHERE accountusername=?1", nativeQuery=true)
+    void approveAccountByUsername(String username);
+
 
 }

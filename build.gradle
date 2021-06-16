@@ -32,7 +32,9 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-validation'
 
     implementation 'com.auth0:java-jwt:3.13.0'
-
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    // https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-ui
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.2'
     //runtimeOnly 'com.h2database:h2'
     //runtimeOnly 'mysql:mysql-connector-java'
     runtimeOnly 'org.postgresql:postgresql'

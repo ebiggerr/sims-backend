@@ -11,26 +11,41 @@ public class item {
     @Column(name="itemid")
     private long id;
 
-    @Column(name="itemsku")
+    @Column(name="skunumber")
     private String SKU;
 
-    @Column(name="imagepath")
+    @Column(name="imagepathfull")
     private String imagePath;
 
     @Column(name="itemname")
     private String itemName;
 
-    @Column(name="itemdimensions")
+    @Column(name="itemdimension",nullable = true)
     private String dimensions;
 
-    @Column(name="itemvolume")
+    @Column(name="itemvolume",nullable = true)
     private String volume;
 
     @Column(name="itemdescription")
     private String itemDescription;
 
     @Column(name="itemunitprice")
-    private String unitPrice;
+    private double unitPrice;
+
+    public item(){
+
+    }
+
+    public item(long id, String SKU, String imagePath, String itemName, String dimensions, String volume, String itemDescription, double unitPrice) {
+        this.id = id;
+        this.SKU = SKU;
+        this.imagePath = imagePath;
+        this.itemName = itemName;
+        this.dimensions = dimensions;
+        this.volume = volume;
+        this.itemDescription = itemDescription;
+        this.unitPrice = unitPrice;
+    }
 
     public long getId() {
         return id;
@@ -88,11 +103,12 @@ public class item {
         this.itemDescription = itemDescription;
     }
 
-    public String getUnitPrice() {
+    public double getUnitPrice() {
         return unitPrice;
     }
 
-    public void setUnitPrice(String unitPrice) {
+    public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
 }
+

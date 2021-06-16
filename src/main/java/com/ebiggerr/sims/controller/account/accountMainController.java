@@ -17,26 +17,38 @@
 
 package com.ebiggerr.sims.controller.account;
 
-import com.ebiggerr.sims.domain.response.API_Response;
-import com.ebiggerr.sims.domain.response.JWTToken;
 import com.ebiggerr.sims.config.jwt.Token_Provider;
+import com.ebiggerr.sims.domain.account.accountEntity;
 import com.ebiggerr.sims.domain.accountAuthenticationDTO;
 import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
+import com.ebiggerr.sims.domain.accountauthentication;
 import com.ebiggerr.sims.domain.request.authenticationRequest;
+import com.ebiggerr.sims.domain.response.API_Response;
+import com.ebiggerr.sims.domain.response.JWTToken;
 import com.ebiggerr.sims.service.account.accountAuthenticationService;
 import com.ebiggerr.sims.service.account.accountService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationEventPublisher;
+import com.ebiggerr.sims.service.input.inputCheckValid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 //@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 public class accountMainController {
+
+    private Logger logger = LoggerFactory.getLogger(accountMainController.class);
 
     private final AuthenticationManager authenticationManager;
 
@@ -62,74 +74,245 @@ public class accountMainController {
         this.accountAuthenticationService = accountAuthenticationService;
     }
 
-    //endpoint for authentication
+    /**
+     * <h1>Authentication using username and password</h1>
+     *
+     * @param request Contains Username and Password, for authentication
+     * @return {String} JSON Web Token wrapped in API_RESPONSE
+     */
     @PostMapping(path = "/authenticate" )
     public API_Response returnJWTAfterAuthentication(@RequestBody authenticationRequest request){
 
-        //TODO SIMS-1 trying to improve this section so no need to create a new object of 'accountAuthenticationDTO'
-        //using accountAuthenticaion_UserDetails would be sufficient
-        //get username, password and authorities[]
+        accountAuthentication_UserDetails acc = new accountAuthentication_UserDetails(null);
 
-        accountAuthentication_UserDetails acc= (accountAuthentication_UserDetails) accountAuthenticationService.loadUserByUsername( request.getUsername() );
-        accountAuthenticationDTO accDTO=acc.getAccountAuthenticationDTOFromUserDetails();
+        try {
+            //check if there is any record with matching username in the database
+            acc = accountAuthenticationService.loadUserByUsername(request.getUsername());
 
-        final Authentication authentication=authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        //TODO SIMS-2 IF SIMS-1 success, then does not need this step
-        //can use the Authentication object
-        //compare the password from request and the password from matching record in database
-        passwordMatch=bCryptPasswordEncoder.matches(request.getPassword(),
-                                                    accDTO.getAccountPassword() );
-        if( !passwordMatch ) {
+        }catch (Exception e){ //NOT FOUND
+            logger.info( "Failed Authentication: Username - " + request.getUsername() );
             return new API_Response().Unauthorized();
         }
-        if( acc == null ) {
+
+        Authentication authentication = null;
+        boolean operationSwitch = true;
+
+        //check if the password from the request matches with the password retrieved from database
+        if( acc == null || !bCryptPasswordEncoder.matches( request.getPassword(), acc.getPassword() )){ //PASSWORD NOT MATCH OR USERNAME NOT FOUND
+            operationSwitch = false;
+            logger.info( "Failed Authentication: Username - " + request.getUsername() );
+            return new API_Response().Unauthorized();
+        }
+
+        //Matched Username and Password from the record in the database
+        if( operationSwitch ) {
+            try {
+                //populated an Authentication object with Username and Password
+                authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            } catch (UsernameNotFoundException e) {
+
+            }
+        }
+
+        if( authentication.isAuthenticated() ) {
+
+            //update user's last login time
+            accountService.updateLastLoginTime( request.getUsername() );
+            logger.info("JWT Token generated for user: " + request.getUsername() );
+
+            //return JWT wrapped in the response
+            return new API_Response().Success( new JWTToken( tokenProvider.generateTokenAuthentication(authentication) ) );
+        }
+        if( authentication == null ) {
             return new API_Response().UserNotFound();
         }
 
-        //TODO change the dummy response to meaningful response
-        //return new API_Response().Success( new JWTToken( tokenProvider.generateToken(authentication) ) );
-        return new API_Response().Unauthorized(); // dummy response
+        return new API_Response().UserNotFound();
     }
 
+    /**
+     * <h1>Registration using username and password</h1>
+     *
+     * @param credentials Credentials for registration : Username and Password
+     * @return response to the registration ? Succeed : Failed
+     */
     @PostMapping(path = "/register")
     public API_Response registerAccount(@RequestBody authenticationRequest credentials){
 
-        //registration
+        String encodedPasswordFromRegisterRequest = bCryptPasswordEncoder.encode( credentials.getPassword() );
+        String message="Something Went Wrong";
+
+        if ( inputCheckValid.checkEmail( credentials.getUsername()) ) {
+            if ( accountService.registerAccount( credentials.getUsername(), encodedPasswordFromRegisterRequest ) ) return new API_Response().Success();
+            else{
+                message = "Duplicates";
+            }
+        }
+        else{ return new API_Response().Failed("Invalid Email Address");
+        }
+
+        return new API_Response().Failed(message);
+    }
+
+    /**
+     * <h1>Update user's last active time</h1>
+     *
+     * @param request User's username
+     * @param token JWT in the header of the request, to extract the username from the token
+     * @return Response to the request
+     */
+    @PreAuthorize("hasAnyAuthority('Admin','Manager','Staff')")
+    @PostMapping(path= "/updateLastActive" )
+    public API_Response logout(@RequestBody authenticationRequest request,@RequestHeader (name="Authorization") String token){
+
+        accountService.logout( request.getUsername() );
+        logger.info("Logout Operation: " + tokenProvider.getUsernameFromToken(token) );
 
         return new API_Response().Success();
     }
 
-    // endpoint that update account lastActive time
-    @PostMapping(path= "/logout" )
-    public API_Response logout(@RequestBody authenticationRequest request){
+    /**
+     * <h1>Provide user the details of requested user by username</h1>
+     *
+     * @param username Username of the account
+     * @return Details of that requested account wrapped in API_RESPONSE
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @GetMapping(path="/account/details/{username}")
+    public API_Response getAccountDetails(@PathVariable String username){
 
-        accountService.logout(request.getUsername());
+        accountauthentication found = accountService.getByUsername(username);
 
+        if( found != null ) return new API_Response().Success( found );
+        return new API_Response().Failed("Not Found");
+    }
+
+    /**
+     * <h1>Provide user the details of all active users</h1>
+     *
+     * @return Details of all accounts wrapped in API_RESPONSE
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @GetMapping(path="/account/details/allActive")
+    public API_Response getAllAccountDetails(){
+
+        List<accountAuthenticationDTO> found = accountAuthenticationService.getAllAccountInfoWithRoles();
+
+        if( found != null ) return new API_Response().Success( found );
+        return new API_Response().Failed("Not Found");
+    }
+
+    @PreAuthorize("hasAuthority('Admin')")
+    @GetMapping(path="/account/details/allPending")
+    public API_Response getAllAccountDetailsPending(){
+
+        List<accountEntity> found = accountService.getAllPending();
+
+        if( found != null ) return new API_Response().Success( found );
+        return new API_Response().Failed("Not Found");
+    }
+
+    /**
+     * <h1> Update Roles of an account with given username</h1>
+     *
+     * Update of roles will not happen if there is any conflict, and that account have that roles/authorities
+     * For example: If user1 has roles of Admin, roles of "Admin" will not be updated again if the @param roles is Admin,Manager [ Update Manager only, ignoring Admin]
+     *
+     *
+     * @param username Username of that account
+     * @param roles [String] A series of roles separated with comma. Example: Admin,Manager,Staff
+     * @param token Extract the username from JWT for user operation logging
+     * @return Response to the operation ? Succeed : Failed
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @PostMapping(path = "/account/addroles/{username}")
+    public API_Response updateRolesOfAnAccount(@PathVariable String username, @RequestParam(name = "roles") String roles, @RequestHeader (name="Authorization") String token){
+
+        //A series of roles separated with comma. Example: Admin,Manager,Staff
+        String[] arr= roles.split(",");
+
+        boolean success = accountService.updateRolesForAnAccount(arr, username);
+
+        if( !success ) return new API_Response().Error("Something Went Wrong");
+
+        logger.info( "[Admin]" + tokenProvider.getUsernameFromToken(token) + " updates [Roles] of Account with [Username] of " + username + " with " + Arrays.toString(arr) );
         return new API_Response().Success();
     }
 
-    @GetMapping(path="/account/details/{accountID}")
-    public API_Response getAccountDetails(@PathVariable String accountID){
+    /**
+     * <h1> Revoke Roles of an account with given username</h1>
+     *
+     *
+     *
+     * @param username Username of that account
+     * @param roles [String] A series of roles separated with comma. Example: Admin,Manager,Staff
+     * @param token Extract the username from JWT for user operation logging
+     * @return Response to the operation ? Succeed : Failed
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @PutMapping(path = "/account/revokeroles/{username}")
+    public API_Response revokeRolesOfAnAccount(@PathVariable String username, @RequestParam(name = "roles") String roles, @RequestHeader (name="Authorization") String token){
 
+        String[] arr = roles.split(",");
+
+        boolean success = accountService.revokeRolesForAnAccount(arr,username);
+
+        if( !success ) return new API_Response().Error("Something Went Wrong");
+
+        logger.info( "[Admin]" + tokenProvider.getUsernameFromToken(token) + " revoked the [Roles] " + Arrays.toString(arr) + " of Account with [Username] of " + username  );
         return new API_Response().Success();
     }
 
-    @PostMapping(path = "/account/updateRoles")
-    public API_Response updateRolesOfAnAccount( /* @RequestBody */  ){
+    /**
+     * <h1> Revoke an account from accessing the system </h1>
+     *
+     * Update the accountStatus of an account from "APPROVED" to "PENDING"
+     *
+     * @param username Target account's username
+     * @param token Extract the username rom JWT for user operation logging
+     * @return Response to the operation ? Succeed : Failed
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @DeleteMapping(path = "/account/revoke/{username}")
+    public API_Response removeAnAccount(@PathVariable String username,@RequestHeader (name="Authorization") String token){
 
-        return new API_Response().Success();
+        try{
+            boolean success = accountService.revokeAnAccount(username);
+            if ( success ) logger.info( "[Admin]" + tokenProvider.getUsernameFromToken(token) + " revoked Account with [Username] of " + username  );
+            else{
+                return new API_Response().NoRecordFound();
+            }
+            return new API_Response().Success();
+        }catch (UsernameNotFoundException e){
+            return new API_Response().UserNotFound();
+        }
+
     }
 
-    @PostMapping(path = "/account/remove")
-    public API_Response removeAnAccount( /* @RequestBody */  ){
+    /**
+     * <h1> Approve an account to have access to the system </h1>
+     *
+     * Update the accountStatus of an account from "PENDING" to "APPROVED"
+     *
+     * @param username Target account's username
+     * @param token Extract the username rom JWT for user operation logging
+     * @return Response to the operation ? Succeed : Failed
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @PutMapping(path = "/account/approve/{username}")
+    public API_Response approveAnAccount( @PathVariable String username,@RequestHeader (name="Authorization") String token ){
 
-        return new API_Response().Success();
-    }
-
-    @PostMapping(path = "/account/approve")
-    public API_Response approveAnAccount( /* @RequestBody */  ){
+        try{
+            boolean success = accountService.approveAnAccount(username);
+            if( success ) logger.info( "[Admin]" + tokenProvider.getUsernameFromToken(token) + " approved Account with [Username] of " + username  );
+            else{
+                return new API_Response().NoRecordFound();
+            }
+        }catch (Exception e){
+            return new API_Response().Failed("Something Went Wrong.");
+        }
 
         return new API_Response().Success();
     }
