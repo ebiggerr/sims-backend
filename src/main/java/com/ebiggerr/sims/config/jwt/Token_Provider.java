@@ -25,39 +25,55 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+//@Component
 @Service
-@PropertySource(value = {"classpath:application-dev.properties"})
+//@PropertySource(value = {"classpath:application.properties"})
 public class Token_Provider extends JWT {
 
-    @Value("${secret.signing.key}")
-    private String privateKey;
+    //@Value("${secret.key}")
+    private String privateKey = "jXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y";
+    Algorithm algorithm = Algorithm.HMAC256(privateKey);
 
-    @Value("${jwt.authorities.key}")
-    private String AUTHORITIES_KEY;
 
+    /*@Value("${jwt.authorities.key}")
+    private String AUTHORITIES_KEY;*/
+
+   /* @Value("${secret.key}")
+    public void setPrivateKey(  String key){
+        this.privateKey = key;
+    }*/
+
+    /**
+     *
+     * @param acc User Details object that contains the Username, Password and Roles/Authorities
+     * @return [String] JSON Web Token
+     *
+     * Claims: Issuer, IssuedAt, ExpiredAt, Username, Roles
+     *
+     */
     public String generateToken(accountAuthentication_UserDetails acc){
 
         // TODO fix to get from application.properties
-        Algorithm algorithm = Algorithm.HMAC256("secret-signing-key");
+        Algorithm algorithm = Algorithm.HMAC256(privateKey);
 
-        final String authorities= acc.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+        final String authorities = acc.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
-        //TODO
         Instant nowEp = Instant.now();
-
         Date now = Date.from(nowEp);
-
         // 30 minutes Expiration Duration
         Date exp = Date.from(nowEp.plus(30, ChronoUnit.MINUTES));
 
@@ -76,27 +92,119 @@ public class Token_Provider extends JWT {
         return null;
     }
 
-    public UsernamePasswordAuthenticationToken verifyAndDecodeToken(String token){
+    /**
+     *
+     * @param authentication Authentication object that contains the Principals, Credentials and Roles/Authorities
+     * @return [String] JSON Web Token
+     *
+     * Claims: Issuer, IssuedAt, ExpiredAt, Username, Roles
+     *
+     */
+    public String generateTokenAuthentication(Authentication authentication){
 
-        // TODO fix to get from application.properties
-        Algorithm algorithm = Algorithm.HMAC256("secret-signing-key");
+        algorithm = Algorithm.HMAC256(privateKey);
+
+        final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+
+        Instant nowEp = Instant.now();
+        Date now = Date.from(nowEp);
+        // 30 minutes Expiration Duration
+        Date exp = Date.from(nowEp.plus(30, ChronoUnit.MINUTES));
+
+        // extract username from Authentication object
+        Object principal = authentication.getPrincipal();
+        String username = null;
+        if (principal instanceof accountAuthentication_UserDetails) {
+             username = ((accountAuthentication_UserDetails)principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        try{
+            String token = JWT.create()
+                    .withClaim("username", username)
+                    .withClaim("roles",authorities)
+                    .withIssuedAt(now)
+                    .withExpiresAt(exp)
+                    .withIssuer("auth0")
+                    .sign(algorithm);
+            return token;
+
+        }catch (JWTCreationException exception){
+
+        }
+        return null;
+    }
+
+    /*public boolean validateToken(String token, UserDetails userDetails){
+
+        String username=null;
+        algorithm = Algorithm.HMAC256(privateKey);
 
         try {
 
-            JWTVerifier verifier = JWT.require(algorithm).build();
+            //JWTVerifier verifier = JWT.require(algorithm).build();
 
             //verify and decode the token
-            DecodedJWT decodedJWT = verifier.verify(token);
+            DecodedJWT decodedJWT= JWT.require(algorithm).build().verify(token);
 
+            username= decodedJWT.getClaim("username").asString();
 
 
         }catch(JWTVerificationException jwtVerificationException){
 
         }
+        return ( username.equals( userDetails.getUsername() ) );
 
-        //TODO
-        return null;
+    }*/
+
+    /**
+     *
+     * @param token JSON Web Token
+     * @return DecodedJWT from the JSON Web Token
+     */
+    public DecodedJWT verifyAndDecodeToken(String token){
+
+        // TODO fix to get from application.properties
+        algorithm = Algorithm.HMAC256(privateKey);
+        JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build();
+
+        DecodedJWT decodedJWT = verifier.verify(token);
+
+        return decodedJWT;
     }
 
+    /**
+     *
+     * @param decodedJWT decodedJWT from the Request
+     * @param existingAuth always be null
+     * @param username username extract from the JWT
+     * @return UsernamePasswordAuthenticationToken to be used by SecurityContextHolder.getContext.setAuthentication(), @PreAuthorize on controllers
+     */
+    UsernamePasswordAuthenticationToken getAuthenticationToken (DecodedJWT decodedJWT, final Authentication existingAuth, String username){
+
+        final Collection<? extends GrantedAuthority> authorities =
+                Arrays.stream(decodedJWT.getClaim("roles").asString().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
+        return new UsernamePasswordAuthenticationToken(username,"",authorities);
+    }
+
+    /**
+     *
+     * @param token JSON Web Token
+     * @return Extracted username from the JWT
+     */
+    public String getUsernameFromToken(String token){
+
+        token = token.replace("Bearer","").trim();
+
+        algorithm = Algorithm.HMAC256(privateKey);
+
+        DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
+
+        token = decodedJWT.getClaim("username").asString();
+
+        return token; //username from JWT
+    }
 
 }

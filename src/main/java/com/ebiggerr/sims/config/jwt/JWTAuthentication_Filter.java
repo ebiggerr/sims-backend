@@ -17,8 +17,15 @@
 
 package com.ebiggerr.sims.config.jwt;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
+import com.ebiggerr.sims.service.account.accountAuthenticationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -29,8 +36,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-@PropertySource(value = {"classpath:application-dev.properties"})
+// @PropertySource(value = {"classpath:application-dev.properties"})
 public class JWTAuthentication_Filter extends OncePerRequestFilter {
+
+    //@Resource(name="accountAuthenticationService")
+    /*@Autowired
+    private accountAuthenticationService accountAuthenticationService;*/
+
+    @Autowired
+    private final Token_Provider tokenProvider=new Token_Provider();
 
     @Value("${jwt.header.string}")
     public String HEADER_STRING;
@@ -41,21 +55,46 @@ public class JWTAuthentication_Filter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String header= request.getHeader(this.HEADER_STRING);
-        String username= null;
+        String username = null;
         String authToken = null;
+        DecodedJWT decodedJWT = null;
 
-        if ( header != null && header.startsWith(this.TOKEN_PREFIX)){
-            authToken = header.replace(this.TOKEN_PREFIX,"");
+        //extract request header
+        String header = request.getHeader("Authorization");
 
-            /*try{
+        if ( header != null && header.startsWith("Bearer")){
+            authToken = header.replace("Bearer","").trim(); //extract the token String by eliminate the "Bearer"
 
-            }catch (Exception e){
+            try{
+                Token_Provider provider = new Token_Provider();
+                decodedJWT = provider.verifyAndDecodeToken(authToken);
+                username = decodedJWT.getClaim("username").asString();
 
-            }*/
+            }catch ( JWTVerificationException jwtVerificationException){
+                logger.error("Invalid JWT: " + jwtVerificationException.getMessage() );
+            }
         }
 
-        doFilter(request,response,filterChain);
+        if( username != null && SecurityContextHolder.getContext().getAuthentication() == null ) {
+
+            //redundant checking using database
+            //opposite the purpose of using JWT
+            //accountAuthentication_UserDetails acc = accountAuthenticationService.loadUserByUsername(username);
+
+            if (SecurityContextHolder.getContext().getAuthentication() == null && decodedJWT != null) {
+
+                //extract username and authorities from the decoded JWT
+                UsernamePasswordAuthenticationToken authenticationToken =
+                        tokenProvider.getAuthenticationToken(decodedJWT, SecurityContextHolder.getContext().getAuthentication(), username );
+                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                //update
+                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            }
+        }
+
+        filterChain.doFilter(request,response);
 
     }
 }

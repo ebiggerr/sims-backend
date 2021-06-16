@@ -18,10 +18,11 @@
 package com.ebiggerr.sims.config.jwt;
 
 import com.ebiggerr.sims.service.account.accountAuthenticationService;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,51 +37,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity( prePostEnabled = true )
 public class WebSecurity_Config extends WebSecurityConfigurerAdapter {
 
-    private final UnauthorizedEntryPoint unauthorizedEntryPoint;
-
+    //@Resource(name="accountAuthenticationService")
     private final accountAuthenticationService accountAuthenticationService;
 
-    /**
-     * Constructor-based dependency injection
-     * @param accountAuthenticationService
-     * @param unauthorizedEntryPoint
-     */
+    private final UnauthorizedEntryPoint unauthorizedEntryPoint;
+
     //@Autowired
     public WebSecurity_Config(accountAuthenticationService accountAuthenticationService, UnauthorizedEntryPoint unauthorizedEntryPoint) {
-        this.accountAuthenticationService = accountAuthenticationService;
         this.unauthorizedEntryPoint = unauthorizedEntryPoint;
+        this.accountAuthenticationService = accountAuthenticationService;
     }
 
-    /*@Autowired
-    protected void setUnauthorizedEntryPoint(UnauthorizedEntryPoint unauthorizedEntryPoint){
-        this.unauthorizedEntryPoint=unauthorizedEntryPoint;
-    }
-
-    @Autowired
-    protected void setAccountAuthenticationService(accountAuthenticationService accountAuthenticationService){
-        this.accountAuthenticationService=accountAuthenticationService;
-    }*/
-
-    /**
-     *
-     * @param auth
-     * @throws Exception
-     */
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(accountAuthenticationService).passwordEncoder(encoder());
+        auth.parentAuthenticationManager(authenticationManagerBean());
+        auth.userDetailsService(accountAuthenticationService).passwordEncoder( encoder() );
     }
 
-    /**
-     *
-     * @param http
-     * @throws Exception
-     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/authenticate", "/register").permitAll()
+                .antMatchers("/authenticate", "/register","/actuator/**" ,"/api-docs/**","/swagger-ui.html/**","/swagger-ui/**" /*,"/images/item/**"*/).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedEntryPoint).and()
@@ -89,31 +67,17 @@ public class WebSecurity_Config extends WebSecurityConfigurerAdapter {
         http.addFilterBefore( authenticationTokenFilterBean(), UsernamePasswordAuthenticationFilter.class);
     }
 
-    /**
-     *
-     * @return
-     */
     @Bean
     public BCryptPasswordEncoder encoder(){
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     *
-     * @return
-     * @throws Exception
-     */
     @Override
     @Bean
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 
-    /**
-     *
-     * @return
-     * @throws Exception
-     */
     @Bean
     public JWTAuthentication_Filter authenticationTokenFilterBean() throws Exception {
         return new JWTAuthentication_Filter();
@@ -123,5 +87,14 @@ public class WebSecurity_Config extends WebSecurityConfigurerAdapter {
     public CORS_Filter corsFilter() throws Exception{
         return new CORS_Filter();
     }*/
+
+  @Bean
+    public AuthenticationProvider daoAuthenticationProvider(){
+        DaoAuthenticationProvider provider=new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(encoder());
+        provider.setUserDetailsService(accountAuthenticationService);
+
+        return provider;
+    }
 
 }

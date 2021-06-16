@@ -15,19 +15,43 @@
  *     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain;
 
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class accountDTO {
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.LinkedList;
+
+public class accountAuthenticationDTO {
 
     private String accountID;
     private String accountUsername;
+
+    @JsonIgnore
     private String accountPassword;
 
-    private Set<String> accRoles;
-    private Long lastActive;
-    //private String accountStatus;
+    private Collection<String> accRoles= new LinkedList<>();
+
+    private LocalDateTime lastActive;
+    private LocalDateTime lastLogin;
+
+    public accountAuthenticationDTO(String accountID,
+                                 String accountUsername,
+                                 Collection<String> accRoles,
+                                    LocalDateTime lastLogin,
+                                    LocalDateTime lastActive){
+        this.accountID=accountID;
+        this.accountUsername=accountUsername;
+        this.accRoles=accRoles;
+        this.lastActive=lastActive;
+        this.lastLogin=lastLogin;
+
+    }
+
+    public accountAuthenticationDTO(){
+
+    }
 
     public String getAccountID() {
         return accountID;
@@ -53,29 +77,27 @@ public class accountDTO {
         this.accountPassword = accountPassword;
     }
 
-    public Set<String> getAccRoles() {
+    public Collection<String> getAccRoles() {
         return accRoles;
     }
 
-    public void setAccRoles(Set<String> accRoles) {
+    public void setAccRoles(Collection<String> accRoles) {
         this.accRoles = accRoles;
     }
 
-    public Long getLastActive() {
+    public LocalDateTime getLastActive() {
         return lastActive;
     }
 
-    public void setLastActive(Long lastActive) {
+    public void setLastActive(LocalDateTime lastActive) {
         this.lastActive = lastActive;
     }
 
-    /**
-     *
-     */
-    public account getAccountFromDTO(){
-        account acc=new account();
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
 
-
-        return acc;
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
     }
 }
