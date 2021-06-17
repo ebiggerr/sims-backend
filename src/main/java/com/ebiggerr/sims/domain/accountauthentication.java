@@ -20,6 +20,10 @@ package com.ebiggerr.sims.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 /*
@@ -45,26 +49,44 @@ public class accountauthentication {
     @JoinColumn(name = "accountid", nullable = false)
     private Set<accountrole> accRoles;
 
-    //private Long lastActive;
+    @Column( name="lastlogin",nullable = true)
+    private LocalDateTime lastLogin;
 
-    //private String statusAcount;
+    @Column (name="lastactive",nullable = true)
+    private LocalDateTime lastActive;
 
-    protected accountauthentication(){
+    public accountauthentication(){
         //no-arg constructor
     }
 
-    public accountauthentication(String accountID,
+  /*  public accountauthentication(String accountID,
                                  String accountUsername,
-                                 String accountPassword){
+                                 String accountPassword,
+                                 Set<accountrole> accRoles){
         this.accountID=accountID;
         this.accountUsername=accountUsername;
         this.accountPassword=accountPassword;
-        //this.lastActive=lastActive;
-        //this.accountStatus=accountStatus;
+        this.accRoles=accRoles;
+
+    }*/
+
+    public accountauthentication(String accountID,
+                                 String accountUsername,
+                                 String accountPassword,
+                                 LocalDateTime lastLogin,
+                                 LocalDateTime lastActive,
+                                 Set<accountrole> accRoles){
+        this.accountID=accountID;
+        this.accountUsername=accountUsername;
+        this.accountPassword=accountPassword;
+        this.accRoles=accRoles;
+        this.lastLogin=lastLogin;
+        this.lastActive=lastActive;
+
     }
 
     public String getAccountID() {
-        return accountID;
+        return this.accountID;
     }
 
     public void setAccountID(String accountID) {
@@ -72,7 +94,7 @@ public class accountauthentication {
     }
 
     public String getAccountUsername() {
-        return accountUsername;
+        return this.accountUsername;
     }
 
     public void setAccountUsername(String accountUsername) {
@@ -80,28 +102,76 @@ public class accountauthentication {
     }
 
     public String getAccountPassword() {
-        return accountPassword;
+        return this.accountPassword;
     }
 
     public void setAccountPassword(String accountPassword) {
         this.accountPassword = accountPassword;
     }
 
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public LocalDateTime getLastActive() {
+        return lastActive;
+    }
+
+    public void setLastActive(LocalDateTime lastActive) {
+        this.lastActive = lastActive;
+    }
+
     public Set<accountrole> getAccRoles() {
-        return accRoles;
+        return this.accRoles;
     }
 
     public void setAccRoles(Set<accountrole> accRoles) {
         this.accRoles = accRoles;
     }
 
-    @Override
+    /*@Override
     public String toString(){
 
         return "The account username is: " + this.getAccountUsername()
                             + " with account ID of " + this.getAccountID()
                             + " and password of " + this.getAccountPassword()
                             + " and roles of " + this.getAccRoles().toString();
+    }*/
+
+    public accountAuthenticationDTO getAccountAuthenticationDTOFromEntity(accountauthentication accountauthentication){
+
+        accountAuthenticationDTO accountauthenticationDTO= new accountAuthenticationDTO();
+        accountauthenticationDTO.setAccountID(accountauthentication.getAccountID());
+        accountauthenticationDTO.setAccountUsername(accountauthentication.getAccountUsername());
+        accountauthenticationDTO.setAccountPassword(accountauthentication.getAccountPassword());
+
+        Set<accountrole> accountRoleSet=accountauthentication.getAccRoles();
+        Iterator<accountrole> accountRoleIterator = accountRoleSet.iterator();
+
+        accountrole temp = new accountrole();
+        int size = accountRoleSet.size();
+
+        Collection<String> roleList= new LinkedList<>();
+
+        for( int index=0; index < size ; index ++){
+
+            temp=accountRoleIterator.next();
+            //String accountRole_accountID = temp.getAccountID();
+            //String accountRole_roleID = temp.getRoleID();
+
+            roledetails roleDetails = temp.getRoleDetailsSet();
+            //String roleName=roledetails.getRoleName();
+
+            roleList.add( roleDetails.getRoleName() );
+        }
+
+        accountauthenticationDTO.setAccRoles(roleList);
+
+        return accountauthenticationDTO;
     }
 
 

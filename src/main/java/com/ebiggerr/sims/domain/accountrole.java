@@ -26,6 +26,7 @@ import java.io.Serializable;
  *
  */
 @Entity
+//@IdClass(accountIdRoleId.class)
 @Table(name="accountrole")
 public class accountrole implements Serializable {
 
@@ -67,12 +68,14 @@ public class accountrole implements Serializable {
         this.roleDetailsSet = roleDetailsSet;
     }
 
-    @Override
+  /*  @Override
     public String toString(){
 
         return "The account ID is: " + this.getAccountID()
                 + " with role ID of " + this.getRoleID()
                 + " with Role Name of " + this.getRoleDetailsSet().toString();
 
-    };
+    };*/
+
+
 }
