@@ -20,4 +20,40 @@ Its frontend is built using Angular and FusionCharts (available in another repos
 The project is built using Gradle build tool.
 
  
+ #### Entities / Domains
+ 
+ accountauthetication - ORM 
+    
+    -id
+    -username
+    -password
+    -accRoles ( nested Object ) ORM
+ 
+ accountauthenticationDTO - DTO ( FROM accountauthetication )
+ 
+    -id
+    -username
+    -password
+    -accRoles ( Collection <String> LinkedList
+ 
+ accountEntity - ORM ( for registering and logout ) 
+ 
+    -id
+    -username 
+    -password
+    -lastLogin
+    -lastActive
+    -accountStatus
+    
+   account - DTO
+
+    -id
+    -username
+    -password
+    -lastLogin
+    -lastActive
+    -accountStatus 
+     
+       
+   
 
