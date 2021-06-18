@@ -1,6 +1,5 @@
 package com.ebiggerr.sims.service.input;
 
-import com.ebiggerr.sims.domain.request.itemRequest;
 import com.ebiggerr.sims.domain.request.itemWithImageRequest;
 
 import java.util.regex.Matcher;
@@ -63,36 +62,6 @@ public class inputCheckValid {
         Matcher dimensionMatcher = dimensionsPattern.matcher(dimensions);
 
         return dimensionMatcher.matches();
-    }
-
-
-    public static String checkAllForItem(itemRequest item){
-
-        boolean valid = true;
-        String message = null;
-
-        if( !inputCheckValid.checkDimension( item.getDimensions() ) ) {
-            valid = false;
-            message = "Invalid Dimensions.(LxWxH) Valid Example: 3-2-3";
-        }
-
-        if( !inputCheckValid.checkPriceDoublePrecision( item.getUnitPrice() ) ) {
-            valid = false;
-            message = "Invalid Unit Price. Valid Example: 1.00";
-        }
-
-        if( !inputCheckValid.checkVolumeWeightInput( item.getVolume() ) ) {
-            valid = false;
-            message = "Invalid Volume/Weight. Valid Example: 1.00kg / 1L";
-        }
-
-
-        if(!valid){
-            return message;
-        }
-
-        return null;
-
     }
 
     public static String checkAllForItem(itemWithImageRequest item){

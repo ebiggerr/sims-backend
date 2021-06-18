@@ -3,7 +3,6 @@ package com.ebiggerr.sims.service.inventory;
 import com.ebiggerr.sims.domain.dashboard.category;
 import com.ebiggerr.sims.domain.inventory.item;
 import com.ebiggerr.sims.domain.inventory.itemDTO;
-import com.ebiggerr.sims.domain.request.itemRequest;
 import com.ebiggerr.sims.domain.request.itemWithImageRequest;
 import com.ebiggerr.sims.domain.response.inventory;
 import com.ebiggerr.sims.mapper.inventoryConverter;
@@ -37,34 +36,6 @@ public class inventoryService {
         this.categoryRepo=categoryRepo;
     }
 
-
-    public boolean addNewItem(itemRequest item){
-
-        int id= inventoryRepo.getMaxID();
-
-        try{
-            item itemEntity = new item(
-                    id+1,
-                    item.getSKU(),
-                    item.getImagePath(),
-                    item.getItemName(),
-                    item.getDimensions(),
-                    item.getVolume(),
-                    item.getItemDescription(),
-                    Double.parseDouble( item.getUnitPrice() )
-            );
-
-            item repoItem = new item();
-
-            repoItem= inventoryRepo.save(itemEntity);
-
-        }catch (Exception e){
-            return false;
-        }
-
-        return true;
-
-    }
 
     public item addNewItemImage(itemWithImageRequest item) throws IOException {
 
@@ -105,7 +76,7 @@ public class inventoryService {
             }
     }
 
-    public boolean updateItem(itemRequest item){
+   /* public boolean updateItem(itemRequest item){
 
         try{
             Optional<item> itemTemp = inventoryRepo.getByIdIs( item.getId() );
@@ -133,7 +104,7 @@ public class inventoryService {
 
         return true;
 
-    }
+    }*/
 
     public boolean updateItemWithImage(itemWithImageRequest request) throws IOException{
 

@@ -2,7 +2,6 @@ package com.ebiggerr.sims.controller.inventory;
 
 import com.ebiggerr.sims.domain.inventory.item;
 import com.ebiggerr.sims.domain.inventory.itemDTO;
-import com.ebiggerr.sims.domain.request.itemRequest;
 import com.ebiggerr.sims.domain.request.itemWithImageRequest;
 import com.ebiggerr.sims.domain.response.API_Response;
 import com.ebiggerr.sims.domain.response.demandResult;
@@ -135,7 +134,7 @@ public class inventoryMainController {
 
     }
 
-    @PreAuthorize("hasAnyAuthority('Admin','Manager','Staff')")
+    /*@PreAuthorize("hasAnyAuthority('Admin','Manager','Staff')")
     @PutMapping(path ="/inventory/item")
     public API_Response updateAnItem(@RequestBody itemRequest item){
 
@@ -150,25 +149,7 @@ public class inventoryMainController {
         if (success) return new API_Response().Success();
 
         return new API_Response().Failed(message);
-    }
-
-    @PreAuthorize("hasAnyAuthority('Admin','Manager')")
-    @PostMapping(path ="/inventory/item")
-    public API_Response addNewItem(@RequestBody itemRequest item){
-
-        //boolean valid=true;
-        boolean success=false;
-        //TODO new implementation to decrease boilerplate code
-        String message = inputCheckValid.checkAllForItem(item);
-
-        if( message == null ){
-            success = inventoryService.addNewItem(item);
-        }
-
-        if( success ) return new API_Response().Success();
-
-        return new API_Response().Failed(message);
-    }
+    }*/
 
     @PreAuthorize("hasAnyAuthority('Admin','Manager')")
     @PostMapping(path ="/inventory/itemWithImage")
