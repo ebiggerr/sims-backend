@@ -53,7 +53,7 @@ public class inventoryService {
 
                 try {
                     item itemEntity = new item(
-                            id + 1,
+                            id + 1, //increment
                             item.getSKU(),
                             imagePath,
                             item.getItemName(),
