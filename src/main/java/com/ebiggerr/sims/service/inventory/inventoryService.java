@@ -47,7 +47,14 @@ public class inventoryService {
 
                 item repoItem = new item();
                 //TODO use Optional
-                long categoryid= categoryRepo.getCategoryIdByName( item.getCategoryName() );
+                Optional<Integer> categoryIDOptional = categoryRepo.getCategoryIdByNameOptional( item.getCategoryName() );
+                long categoryID;
+                if( categoryIDOptional.isPresent() ) {
+                    categoryID = categoryIDOptional.get();
+                }
+                else{
+                    return null;
+                }
 
                 String imagePath = imageUpload.saveUploadFile(item.getImage(), item.getSKU());
 
@@ -61,7 +68,7 @@ public class inventoryService {
                             item.getVolume(),
                             item.getItemDescription(),
                             Double.parseDouble(item.getUnitPrice()),
-                            categoryid
+                            categoryID
                     );
 
 
@@ -70,7 +77,6 @@ public class inventoryService {
                 } catch (Exception e) {
                     return null;
                 }
-
 
                 return repoItem;
             }
