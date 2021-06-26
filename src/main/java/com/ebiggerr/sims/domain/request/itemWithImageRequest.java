@@ -40,7 +40,10 @@ public class itemWithImageRequest {
     @NotBlank
     private String unitPrice;
 
-    public itemWithImageRequest(MultipartFile image,String skuNumber, String imagePath, String itemName, String dimensions, String volume, String itemDescription, String unitPrice) {
+    @NotBlank
+    private String categoryName;
+
+    public itemWithImageRequest(MultipartFile image,String skuNumber, String imagePath, String itemName, String dimensions, String volume, String itemDescription, String unitPrice, String categoryName) {
         this.image=image;
         //this.id = id;
         this.skuNumber = skuNumber;
@@ -50,6 +53,7 @@ public class itemWithImageRequest {
         this.volume = volume;
         this.itemDescription = itemDescription;
         this.unitPrice = unitPrice;
+        this.categoryName=categoryName;
     }
 
     public MultipartFile getImage(){
@@ -124,7 +128,9 @@ public class itemWithImageRequest {
         this.unitPrice = unitPrice;
     }
 
+    public String getCategoryName(){ return categoryName; }
 
+    public void setCategoryName(String categoryName){ this.categoryName = categoryName; }
 
 
 }
