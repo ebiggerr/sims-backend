@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface categoryRepo extends JpaRepository<category,Long> {
@@ -19,6 +20,9 @@ public interface categoryRepo extends JpaRepository<category,Long> {
 
     @Query(value="SELECT categoryid FROM itemcategory WHERE categoryname=?1 ", nativeQuery=true)
     int getCategoryIdByName(String categoryName);
+
+    @Query(value="SELECT categoryid FROM itemcategory WHERE categoryname=?1 ", nativeQuery=true)
+    Optional<Integer> getCategoryIdByNameOptional(String categoryName);
 
     /*@Query(value="SELECT categoryid, categoryname FROM itemcategory", nativeQuery=true)
     List<category> getAll();*/
