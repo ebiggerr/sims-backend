@@ -46,6 +46,8 @@ public class inventoryService {
             if( findDuplicates.isEmpty() ) {
 
                 item repoItem = new item();
+                //TODO use Optional
+                long categoryid= categoryRepo.getCategoryIdByName( item.getCategoryName() );
 
                 String imagePath = imageUpload.saveUploadFile(item.getImage(), item.getSKU());
 
@@ -58,7 +60,8 @@ public class inventoryService {
                             item.getDimensions(),
                             item.getVolume(),
                             item.getItemDescription(),
-                            Double.parseDouble(item.getUnitPrice())
+                            Double.parseDouble(item.getUnitPrice()),
+                            categoryid
                     );
 
 
