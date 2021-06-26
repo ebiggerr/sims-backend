@@ -46,19 +46,29 @@ public class inventoryService {
             if( findDuplicates.isEmpty() ) {
 
                 item repoItem = new item();
+                //TODO use Optional
+                Optional<Integer> categoryIDOptional = categoryRepo.getCategoryIdByNameOptional( item.getCategoryName() );
+                long categoryID;
+                if( categoryIDOptional.isPresent() ) {
+                    categoryID = categoryIDOptional.get();
+                }
+                else{
+                    return null;
+                }
 
                 String imagePath = imageUpload.saveUploadFile(item.getImage(), item.getSKU());
 
                 try {
                     item itemEntity = new item(
-                            id + 1,
+                            id + 1, //increment
                             item.getSKU(),
                             imagePath,
                             item.getItemName(),
                             item.getDimensions(),
                             item.getVolume(),
                             item.getItemDescription(),
-                            Double.parseDouble(item.getUnitPrice())
+                            Double.parseDouble(item.getUnitPrice()),
+                            categoryID
                     );
 
 
@@ -67,7 +77,6 @@ public class inventoryService {
                 } catch (Exception e) {
                     return null;
                 }
-
 
                 return repoItem;
             }

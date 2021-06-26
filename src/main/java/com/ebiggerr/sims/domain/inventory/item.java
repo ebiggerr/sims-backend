@@ -32,11 +32,14 @@ public class item {
     @Column(name="itemunitprice")
     private double unitPrice;
 
+    @Column(name = "categoryid")
+    private long categoryID;
+
     public item(){
 
     }
 
-    public item(long id, String SKU, String imagePath, String itemName, String dimensions, String volume, String itemDescription, double unitPrice) {
+    public item(long id, String SKU, String imagePath, String itemName, String dimensions, String volume, String itemDescription, double unitPrice, long categoryID) {
         this.id = id;
         this.SKU = SKU;
         this.imagePath = imagePath;
@@ -45,6 +48,7 @@ public class item {
         this.volume = volume;
         this.itemDescription = itemDescription;
         this.unitPrice = unitPrice;
+        this.categoryID = categoryID;
     }
 
     public long getId() {
@@ -110,5 +114,9 @@ public class item {
     public void setUnitPrice(double unitPrice) {
         this.unitPrice = unitPrice;
     }
+
+    public long getCategoryID() { return categoryID; }
+
+    public void setCategoryID(long categoryID) { this.categoryID = categoryID; }
 }
 
