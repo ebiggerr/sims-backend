@@ -19,8 +19,6 @@ package com.ebiggerr.sims.config.jwt;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
-import com.ebiggerr.sims.service.account.accountAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,10 +36,6 @@ import java.io.IOException;
 @Component
 // @PropertySource(value = {"classpath:application-dev.properties"})
 public class JWTAuthentication_Filter extends OncePerRequestFilter {
-
-    //@Resource(name="accountAuthenticationService")
-    /*@Autowired
-    private accountAuthenticationService accountAuthenticationService;*/
 
     @Autowired
     private final Token_Provider tokenProvider=new Token_Provider();
@@ -76,10 +70,6 @@ public class JWTAuthentication_Filter extends OncePerRequestFilter {
         }
 
         if( username != null && SecurityContextHolder.getContext().getAuthentication() == null ) {
-
-            //redundant checking using database
-            //opposite the purpose of using JWT
-            //accountAuthentication_UserDetails acc = accountAuthenticationService.loadUserByUsername(username);
 
             if (SecurityContextHolder.getContext().getAuthentication() == null && decodedJWT != null) {
 
