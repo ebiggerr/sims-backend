@@ -100,25 +100,21 @@ public class accountMainController {
         }
 
         Authentication authentication = null;
-        boolean operationSwitch = true;
 
         //check if the password from the request matches with the password retrieved from database
         if( acc == null || !bCryptPasswordEncoder.matches( request.getPassword(), acc.getPassword() )){ //PASSWORD NOT MATCH OR USERNAME NOT FOUND
-            operationSwitch = false;
             logger.info( "Failed Authentication: Username - " + request.getUsername() );
             return new API_Response().Unauthorized();
         }
 
         //Matched Username and Password from the record in the database
-        if( operationSwitch ) {
-            try {
-                //populated an Authentication object with Username and Password
-                authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            //populated an Authentication object with Username and Password
+            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            } catch (UsernameNotFoundException e) {
-
-            }
+        } catch (UsernameNotFoundException e) {
+            logger.info( "Failed Authentication: Username - " + request.getUsername() + " | Message: " + e.getMessage() );
         }
 
         if( authentication.isAuthenticated() ) {
@@ -129,9 +125,6 @@ public class accountMainController {
 
             //return JWT wrapped in the response
             return new API_Response().Success( new JWTToken( tokenProvider.generateTokenAuthentication(authentication) ) );
-        }
-        if( authentication == null ) {
-            return new API_Response().UserNotFound();
         }
 
         return new API_Response().UserNotFound();
