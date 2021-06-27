@@ -107,36 +107,6 @@ public class inventoryService {
             }
     }
 
-   /* public boolean updateItem(itemRequest item){
-
-        try{
-            Optional<item> itemTemp = inventoryRepo.getByIdIs( item.getId() );
-
-            item itemEntity = null;
-
-            if( itemTemp.isPresent() ){
-                itemEntity = itemTemp.get();
-            }
-            else{ return false; }
-
-            itemEntity.setSKU( item.getSKU() );
-            itemEntity.setItemName( item.getItemName() );
-            itemEntity.setDimensions( item.getDimensions() );
-            itemEntity.setVolume( item.getVolume() );
-            itemEntity.setImagePath( item.getImagePath() );
-            itemEntity.setUnitPrice( Double.parseDouble( item.getUnitPrice() ) );
-            itemEntity.setItemDescription( item.getItemDescription() );
-
-            inventoryRepo.save(itemEntity);
-
-        }catch (Exception e){
-            return false;
-        }
-
-        return true;
-
-    }*/
-
     public boolean updateItemWithImage(itemWithImageRequest request) throws IOException{
 
 
