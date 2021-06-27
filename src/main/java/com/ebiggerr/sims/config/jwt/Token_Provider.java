@@ -21,15 +21,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -47,7 +44,7 @@ public class Token_Provider extends JWT {
     //@Value("${secret.key}")
     private final String privateKey = "jXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y";
     private final Algorithm algorithm = Algorithm.HMAC256(privateKey);
-    
+
     /**
      *
      * @param acc User Details object that contains the Username, Password and Roles/Authorities
