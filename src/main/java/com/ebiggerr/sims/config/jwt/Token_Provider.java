@@ -45,18 +45,9 @@ import java.util.stream.Collectors;
 public class Token_Provider extends JWT {
 
     //@Value("${secret.key}")
-    private String privateKey = "jXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y";
-    Algorithm algorithm = Algorithm.HMAC256(privateKey);
-
-
-    /*@Value("${jwt.authorities.key}")
-    private String AUTHORITIES_KEY;*/
-
-   /* @Value("${secret.key}")
-    public void setPrivateKey(  String key){
-        this.privateKey = key;
-    }*/
-
+    private final String privateKey = "jXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y";
+    private final Algorithm algorithm = Algorithm.HMAC256(privateKey);
+    
     /**
      *
      * @param acc User Details object that contains the Username, Password and Roles/Authorities
@@ -66,9 +57,6 @@ public class Token_Provider extends JWT {
      *
      */
     public String generateToken(accountAuthentication_UserDetails acc){
-
-        // TODO fix to get from application.properties
-        Algorithm algorithm = Algorithm.HMAC256(privateKey);
 
         final String authorities = acc.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
@@ -102,7 +90,7 @@ public class Token_Provider extends JWT {
      */
     public String generateTokenAuthentication(Authentication authentication){
 
-        algorithm = Algorithm.HMAC256(privateKey);
+        //algorithm = Algorithm.HMAC256(privateKey);
 
         final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
@@ -136,28 +124,6 @@ public class Token_Provider extends JWT {
         return null;
     }
 
-    /*public boolean validateToken(String token, UserDetails userDetails){
-
-        String username=null;
-        algorithm = Algorithm.HMAC256(privateKey);
-
-        try {
-
-            //JWTVerifier verifier = JWT.require(algorithm).build();
-
-            //verify and decode the token
-            DecodedJWT decodedJWT= JWT.require(algorithm).build().verify(token);
-
-            username= decodedJWT.getClaim("username").asString();
-
-
-        }catch(JWTVerificationException jwtVerificationException){
-
-        }
-        return ( username.equals( userDetails.getUsername() ) );
-
-    }*/
-
     /**
      *
      * @param token JSON Web Token
@@ -166,7 +132,7 @@ public class Token_Provider extends JWT {
     public DecodedJWT verifyAndDecodeToken(String token){
 
         // TODO fix to get from application.properties
-        algorithm = Algorithm.HMAC256(privateKey);
+        //algorithm = Algorithm.HMAC256(privateKey);
         JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build();
 
         DecodedJWT decodedJWT = verifier.verify(token);
@@ -198,7 +164,7 @@ public class Token_Provider extends JWT {
 
         token = token.replace("Bearer","").trim();
 
-        algorithm = Algorithm.HMAC256(privateKey);
+        //algorithm = Algorithm.HMAC256(privateKey);
 
         DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
 
