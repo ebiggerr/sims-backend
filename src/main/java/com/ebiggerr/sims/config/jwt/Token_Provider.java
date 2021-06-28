@@ -28,7 +28,10 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.ebiggerr.sims.controller.account.accountMainController;
 import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -47,41 +50,11 @@ import java.util.stream.Collectors;
 //@PropertySource(value = {"classpath:application.properties"})
 public class Token_Provider extends JWT {
 
+    private Logger logger = LoggerFactory.getLogger(Token_Provider.class);
+
     //@Value("${secret.key}")
     private final String privateKey = "jXn2r5u8x!A%D*G-KaPdSgVkYp3s6v9y";
     private final Algorithm algorithm = Algorithm.HMAC256(privateKey);
-
-    /**
-     *
-     * @param acc User Details object that contains the Username, Password and Roles/Authorities
-     * @return [String] JSON Web Token
-     *
-     * Claims: Issuer, IssuedAt, ExpiredAt, Username, Roles
-     *
-     */
-    public String generateToken(accountAuthentication_UserDetails acc){
-
-        final String authorities = acc.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
-
-        Instant nowEp = Instant.now();
-        Date now = Date.from(nowEp);
-        // 30 minutes Expiration Duration
-        Date exp = Date.from(nowEp.plus(30, ChronoUnit.MINUTES));
-
-        try{
-            String token = JWT.create()
-                    .withClaim("username", acc.getUsername())
-                    .withClaim("roles",authorities)
-                    .withIssuedAt(now)
-                    .withExpiresAt(exp)
-                    .sign(algorithm);
-            return token;
-
-        }catch (JWTCreationException exception){
-
-        }
-        return null;
-    }
 
     /**
      *
@@ -122,9 +95,10 @@ public class Token_Provider extends JWT {
             return token;
 
         }catch (JWTCreationException exception){
-
+            logger.error( "Something Wrong During the Creation of JWT: " + exception.getMessage() );
+            return "Valid Authentication. Something went wrong during the creation of JWT. Please try again.";
         }
-        return null;
+
     }
 
     /**
