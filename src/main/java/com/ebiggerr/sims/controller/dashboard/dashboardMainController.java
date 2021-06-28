@@ -51,17 +51,4 @@ public class dashboardMainController {
         return new API_Response().Success( dashboardService.getAnalytics() );
     }
 
-
-    /*@GetMapping(path = "/analytics/inventory_composition")
-    public API_Response getInventoryComposition(){
-
-        return new API_Response().Success();
-    }
-
-    @GetMapping(path = "/analytics/inventory_statistics")
-    public API_Response getInventoryStatistics(){
-
-        return new API_Response().Success();
-    }*/
-
 }
