@@ -77,7 +77,7 @@ public class Token_Provider extends JWT {
 
         // extract username from Authentication object
         Object principal = authentication.getPrincipal();
-        String username = null;
+        String username;
         if (principal instanceof accountAuthentication_UserDetails) {
              username = ((accountAuthentication_UserDetails)principal).getUsername();
         } else {
@@ -85,14 +85,21 @@ public class Token_Provider extends JWT {
         }
 
         try{
-            String token = JWT.create()
-                    .withClaim("username", username)
-                    .withClaim("roles",authorities)
-                    .withIssuedAt(now)
-                    .withExpiresAt(exp)
-                    .withIssuer("auth0")
-                    .sign(algorithm);
-            return token;
+            if( username != null ) {
+
+                String token = JWT.create()
+                        .withClaim("username", username)
+                        .withClaim("roles", authorities)
+                        .withIssuedAt(now)
+                        .withExpiresAt(exp)
+                        .withIssuer("auth0")
+                        .sign(algorithm);
+                return token;
+            }
+            else{
+                throw new JWTCreationException("Null Username", new Throwable("Null Username") );
+                //return "Valid Authentication. Something went wrong during the creation of JWT. Please try again.";
+            }
 
         }catch (JWTCreationException exception){
             logger.error( "Something Wrong During the Creation of JWT: " + exception.getMessage() );
