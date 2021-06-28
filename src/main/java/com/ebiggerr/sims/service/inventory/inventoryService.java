@@ -49,6 +49,8 @@ public class inventoryService {
 
     private final int DEFAULT_PAGE_SIZE=50;
 
+    private final int DEFAULT_FIRST_PAGE=1;
+
     private final inventoryConverter mapper= new inventoryConverter();
 
     //private DecimalFormat formatter = new DecimalFormat("#0.00");
@@ -147,7 +149,7 @@ public class inventoryService {
      // replaced by the method @getItemsSortedPageAndSize that with added features such as sorting
     public inventory getItemsPageAndSize(int pageNumber, int pageSize){
 
-        if( pageNumber == 0 || pageNumber < 0 ) pageNumber=1;
+        if( pageNumber == 0 || pageNumber < 0 ) pageNumber= DEFAULT_FIRST_PAGE;
         if( pageSize == 0 || pageSize <0 ) pageSize= DEFAULT_PAGE_SIZE;
 
         PageRequest pageRequest=PageRequest.of(pageNumber-1,pageSize);
@@ -168,8 +170,8 @@ public class inventoryService {
      */
     public inventory getItemsSortedPageAndSize(int pageNumber, int pageSize){
 
-        if( pageNumber == 0 || pageNumber < 0 ) pageNumber=1;
-        if( pageSize == 0 || pageSize <0 ) pageSize= DEFAULT_PAGE_SIZE;
+        if( pageNumber == 0 || pageNumber < 0 ) pageNumber = DEFAULT_FIRST_PAGE;
+        if( pageSize == 0 || pageSize <0 ) pageSize = DEFAULT_PAGE_SIZE;
 
         PageRequest pageRequest=PageRequest.of(pageNumber-1,pageSize, Sort.by("itemid").ascending());
 
@@ -191,7 +193,7 @@ public class inventoryService {
      */
     public inventory getItemsByCategoryWithPageAndSize(int pageNumber,int pageSize, String categoryName, String categoryID){
 
-        if( pageNumber == 0 || pageNumber < 0 ) pageNumber=1;
+        if( pageNumber == 0 || pageNumber < 0 ) pageNumber = DEFAULT_FIRST_PAGE;
         if( pageSize == 0 || pageSize <0 ) pageSize= DEFAULT_PAGE_SIZE;
 
         int categoryId = 0;
