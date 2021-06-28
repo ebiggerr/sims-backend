@@ -154,40 +154,42 @@ public class inventoryMainController {
 
     }
 
-    /*@PreAuthorize("hasAnyAuthority('Admin','Manager','Staff')")
-    @PutMapping(path ="/inventory/item")
-    public API_Response updateAnItem(@RequestBody itemRequest item){
+    @PreAuthorize("hasAnyAuthority('Admin','Manager')")
+    @PutMapping(path ="/inventory/itemWithImage")
+    public API_Response updateAnItem( @Valid @ModelAttribute(value = "itemWithImageRequest") itemWithImageRequest item) throws IOException {
 
-        //System.out.println( item.getItemName() );
-        valid=true;
-        success=false;
+        message = inputCheckValid.checkAllForItem(item);
+        item updatedItem = null;
 
-        String message = inputCheckValid.checkAllForItem(item);
+        if( message == null){
+            updatedItem = inventoryService.updateItemWithImage(item);
 
-        if( message == null ) success = inventoryService.updateItem( item);
+            if( updatedItem == null ){
+                return new API_Response().Failed("Update Failed.");
+            }
 
-        if (success) return new API_Response().Success();
+        }
+        else{
+            return new API_Response().Failed(message);
+        }
 
-        return new API_Response().Failed(message);
-    }*/
+        return new API_Response().Success(updatedItem);
+    }
 
     @PreAuthorize("hasAnyAuthority('Admin','Manager')")
     @PostMapping(path ="/inventory/itemWithImage")
     public API_Response addNewItemWithImage( @Valid @ModelAttribute(value = "itemWithImageRequest") itemWithImageRequest item) throws IOException {
 
-        boolean valid=true;
-        String message = null;
-
         message = inputCheckValid.checkAllForItem(item);
 
-        item response =new item();
+        item response = null;
         if( message == null ){
              response = inventoryService.addNewItemImage(item);
              if( response == null ) return new API_Response().Failed("Duplicates in SKU");
 
         }
 
-        if( response!=null ) return new API_Response().Success(response);
+        if( response != null ) return new API_Response().Success(response);
 
         return new API_Response().Failed(message);
     }
