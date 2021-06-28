@@ -109,11 +109,40 @@ public class inventoryService {
             }
     }
 
-    public boolean updateItemWithImage(itemWithImageRequest request) throws IOException{
+    public item updateItemWithImage(itemWithImageRequest request) throws IOException{
 
+        item result = null;
 
+        //if there is an item with matching id in the inventory
+        Optional<item> findDuplicates = inventoryRepo.getByIdIs( request.getId() );
+        Optional<item> findSKUDuplicate = inventoryRepo.getBySKUIs( request.getSKU() );
 
-        return true;
+        if( findDuplicates.isPresent() && findSKUDuplicate.isEmpty() ){
+
+            String imagePath = imageUpload.saveUploadFile( request.getImage(), request.getSKU() );
+            item toBeUpdate = findDuplicates.get();
+
+            toBeUpdate.setSKU( request.getSKU() );
+            toBeUpdate.setItemName( request.getItemName() );
+            toBeUpdate.setItemDescription( request.getItemDescription() );
+            toBeUpdate.setImagePath( imagePath );
+            toBeUpdate.setVolume( request.getVolume() );
+            toBeUpdate.setDimensions( request.getDimensions() );
+            toBeUpdate.setCategoryID( request.getId() );
+            toBeUpdate.setUnitPrice( Double.parseDouble(request.getUnitPrice()) );
+
+            try {
+                result = inventoryRepo.save(toBeUpdate);
+            }catch (Exception e){
+                return null;
+            }
+        }
+        else{
+            //no record found (matching ID) OR duplicates in SKU
+            return null;
+        }
+        //successful update
+        return result;
     }
 
     /**
