@@ -33,6 +33,8 @@ public class itemWithImageRequest {
     @NotNull
     private MultipartFile image;
 
+    private long id;
+
     @NotNull
     @NotBlank
     @Size(min=4)
@@ -78,6 +80,19 @@ public class itemWithImageRequest {
         this.categoryName=categoryName;
     }
 
+    public itemWithImageRequest(MultipartFile image, long id,String skuNumber, String imagePath, String itemName, String dimensions, String volume, String itemDescription, String unitPrice, String categoryName) {
+        this.image=image;
+        this.id = id;
+        this.skuNumber = skuNumber;
+        this.imagePath = imagePath;
+        this.itemName = itemName;
+        this.dimensions = dimensions;
+        this.volume = volume;
+        this.itemDescription = itemDescription;
+        this.unitPrice = unitPrice;
+        this.categoryName=categoryName;
+    }
+
     public MultipartFile getImage(){
         return this.image;
     }
@@ -86,13 +101,13 @@ public class itemWithImageRequest {
         this.image=image;
     }
 
-   /* public long getId() {
+   public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
-    }*/
+    }
 
     public String getSKU() {
         return skuNumber;
