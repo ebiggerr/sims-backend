@@ -53,14 +53,17 @@ public class inventoryService {
 
     private final inventoryConverter mapper= new inventoryConverter();
 
-    //private DecimalFormat formatter = new DecimalFormat("#0.00");
-
     public inventoryService(inventoryRepo inventoryRepo, categoryRepo categoryRepo){
         this.inventoryRepo=inventoryRepo;
         this.categoryRepo=categoryRepo;
     }
 
-
+    /**
+     *  <h1> Add a new item in the inventory </h1>
+     * @param item information of that item
+     * @return result of the operation , populated item if successful or null in the case of failure
+     * @throws IOException IO exception if there is any error during the operation of writing image file from user request to the resource directory of the project
+     */
     public item addNewItemImage(itemWithImageRequest item) throws IOException {
 
             int id = inventoryRepo.getMaxID();
@@ -109,6 +112,12 @@ public class inventoryService {
             }
     }
 
+    /**
+     * <h1> Update an existing item in the inventory </h1>
+     * @param request information of that item
+     * @return result of the operation , populated item if successful or null in the case of failure
+     * @throws IOException IO exception if there is any error during the operation of writing image file from user request to the resource directory of the project
+     */
     public item updateItemWithImage(itemWithImageRequest request) throws IOException{
 
         item result = null;
@@ -147,8 +156,8 @@ public class inventoryService {
 
     /**
      *
-     * @param skunumber
-     * @return
+     * @param skunumber sku of the item
+     * @return status of the operation successful : true ? false
      */
     public boolean removeItem(String skunumber){
 
