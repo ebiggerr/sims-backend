@@ -50,18 +50,15 @@ public class inventoryMainController {
 
     private final stockService stockService;
 
-    private final historicalSalesService historicalSalesService;
-
     private String message;
     private boolean valid;
     private boolean success;
 
 
-    public inventoryMainController(inventoryService inventoryService,demandService demandService,stockService stockService,historicalSalesService historicalSalesService) {
+    public inventoryMainController(inventoryService inventoryService,demandService demandService,stockService stockService) {
         this.inventoryService = inventoryService;
         this.demandService=demandService;
         this.stockService=stockService;
-        this.historicalSalesService=historicalSalesService;
     }
 
     /**
@@ -183,21 +180,6 @@ public class inventoryMainController {
 
         message = inputCheckValid.checkAllForItem(item);
 
-        /*if( !inputCheckValid.checkDimension( item.getDimensions() ) ) {
-            valid = false;
-            message = "Invalid Dimensions.(LxWxH) Valid Example: 3-2-3";
-        }
-
-        if( !inputCheckValid.checkPriceDoublePrecision( item.getUnitPrice() ) ) {
-            valid = false;
-            message = "Invalid Unit Price. Valid Example: 1.00";
-        }
-
-        if( !inputCheckValid.checkVolumeWeightInput( item.getVolume() ) ) {
-            valid = false;
-            message = "Invalid Volume/Weight. Valid Example: 1.00kg / 1L";
-        }*/
-
         item response =new item();
         if( message == null ){
              response = inventoryService.addNewItemImage(item);
@@ -234,19 +216,6 @@ public class inventoryMainController {
         return new API_Response().Success( stockService.getAllDemandForecastAndStockInfo(demandService) );
 
     }
-
-    /*@PreAuthorize("hasAnyAuthority('Admin')")
-    @GetMapping(path="/inventory/sales/{year}")
-    public API_Response getSalesForAYear(@PathVariable String year){
-
-
-        List<historicalSales> list = historicalSalesService.getSalesFromYear(year);
-
-        if( list != null ) return new API_Response().Success( list );
-        else{
-            return new API_Response().Failed("Not Record Found");
-        }
-    }*/
 
 }
 
