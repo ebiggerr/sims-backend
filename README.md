@@ -76,3 +76,23 @@ springdoc.swagger-ui.operationsSorter=method
 ```
 
 
+## Database Schema
+
+Sample Data and Database Schema is available in the project.
+
+```
+#Sample Data
+/src/main/resources/postgresql/inserts.sql
+
+#Schema
+/src/main/resources/postgresql/schema of database.sql
+
+```
+or you can click [here](https://github.com/ebiggerr/sims-backend/tree/prod/src/main/resources/postgresql)
+
+PostgreSQL is recommended if you want to run this project locally on your machine because some SQL query used in the application might not gonna work on other database such as MySQL, MS SQL Server, and etc.
+
+Native query is used on the data access layer, it is intentional despite the use of Hibernate as the ORM.
+
+
+
