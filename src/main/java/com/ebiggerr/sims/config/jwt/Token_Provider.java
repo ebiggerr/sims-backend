@@ -87,14 +87,13 @@ public class Token_Provider extends JWT {
         try{
             if( username != null ) {
 
-                String token = JWT.create()
+                return JWT.create()
                         .withClaim("username", username)
                         .withClaim("roles", authorities)
                         .withIssuedAt(now)
                         .withExpiresAt(exp)
                         .withIssuer("auth0")
                         .sign(algorithm);
-                return token;
             }
             else{
                 throw new JWTCreationException("Null Username", new Throwable("Null Username") );
@@ -119,9 +118,7 @@ public class Token_Provider extends JWT {
         //algorithm = Algorithm.HMAC256(privateKey);
         JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build();
 
-        DecodedJWT decodedJWT = verifier.verify(token);
-
-        return decodedJWT;
+        return verifier.verify(token);
     }
 
     /**
