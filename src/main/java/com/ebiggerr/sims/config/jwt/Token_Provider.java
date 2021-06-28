@@ -114,8 +114,6 @@ public class Token_Provider extends JWT {
      */
     public DecodedJWT verifyAndDecodeToken(String token){
 
-        // TODO fix to get from application.properties
-        //algorithm = Algorithm.HMAC256(privateKey);
         JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build();
 
         return verifier.verify(token);
@@ -144,8 +142,6 @@ public class Token_Provider extends JWT {
     public String getUsernameFromToken(String token){
 
         token = token.replace("Bearer","").trim();
-
-        //algorithm = Algorithm.HMAC256(privateKey);
 
         DecodedJWT decodedJWT = JWT.require(algorithm).build().verify(token);
 
