@@ -179,7 +179,7 @@ public class AccountMainController {
      */
     @PreAuthorize("hasAuthority('Admin')")
     @GetMapping(path="/account/details/{username}")
-    public API_Response getAccountDetails(@PathVariable String username){
+    public API_Response getAccountDetailsWithGivenUsername(@PathVariable String username){
 
         AccountAuthentication found = accountService.getByUsername(username);
 
@@ -194,7 +194,7 @@ public class AccountMainController {
      */
     @PreAuthorize("hasAuthority('Admin')")
     @GetMapping(path="/account/details/allActive")
-    public API_Response getAllAccountDetails(){
+    public API_Response getAllActiveAccountDetails(){
 
         List<AccountAuthenticationDTO> found = accountAuthenticationService.getAllAccountInfoWithRoles();
 
@@ -204,7 +204,7 @@ public class AccountMainController {
 
     @PreAuthorize("hasAuthority('Admin')")
     @GetMapping(path="/account/details/allPending")
-    public API_Response getAllAccountDetailsPending(){
+    public API_Response getAllPendingAccountDetails(){
 
         List<AccountEntity> found = accountService.getAllPending();
 
@@ -226,7 +226,7 @@ public class AccountMainController {
      */
     @PreAuthorize("hasAuthority('Admin')")
     @PostMapping(path = "/account/addroles/{username}")
-    public API_Response updateRolesOfAnAccount(@PathVariable String username, @RequestParam(name = "roles") String roles, @RequestHeader (name="Authorization") String token){
+    public API_Response updateRolesOfAnAccountWithGivenUsername(@PathVariable String username, @RequestParam(name = "roles") String roles, @RequestHeader (name="Authorization") String token){
 
         //A series of roles separated with comma. Example: Admin,Manager,Staff
         String[] arr= roles.split(",");
@@ -251,7 +251,7 @@ public class AccountMainController {
      */
     @PreAuthorize("hasAuthority('Admin')")
     @PutMapping(path = "/account/revokeroles/{username}")
-    public API_Response revokeRolesOfAnAccount(@PathVariable String username, @RequestParam(name = "roles") String roles, @RequestHeader (name="Authorization") String token){
+    public API_Response revokeRolesOfAnAccountWithGivenUsername(@PathVariable String username, @RequestParam(name = "roles") String roles, @RequestHeader (name="Authorization") String token){
 
         String[] arr = roles.split(",");
 
@@ -274,7 +274,7 @@ public class AccountMainController {
      */
     @PreAuthorize("hasAuthority('Admin')")
     @DeleteMapping(path = "/account/revoke/{username}")
-    public API_Response removeAnAccount(@PathVariable String username,@RequestHeader (name="Authorization") String token){
+    public API_Response removeAnAccountWithGivenUsername(@PathVariable String username,@RequestHeader (name="Authorization") String token){
 
         try{
             boolean success = accountService.revokeAnAccount(username);
@@ -300,7 +300,7 @@ public class AccountMainController {
      */
     @PreAuthorize("hasAuthority('Admin')")
     @PutMapping(path = "/account/approve/{username}")
-    public API_Response approveAnAccount( @PathVariable String username,@RequestHeader (name="Authorization") String token ){
+    public API_Response approveAnAccountWithGivenUsername( @PathVariable String username,@RequestHeader (name="Authorization") String token ){
 
         try{
             boolean success = accountService.approveAnAccount(username);
