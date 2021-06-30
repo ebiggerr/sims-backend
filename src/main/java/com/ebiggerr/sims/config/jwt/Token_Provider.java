@@ -85,8 +85,8 @@ public class Token_Provider extends JWT {
             if( username != null ) {
 
                 return JWT.create()
-                        .withClaim("username", username)
-                        .withClaim("roles", authorities)
+                        .withClaim("username", username)   //account username of the JWT issuing to
+                        .withClaim("roles", authorities) //Example- roles: "Staff","Manager"
                         .withIssuedAt(now)
                         .withExpiresAt(exp)
                         .withIssuer("auth0")
