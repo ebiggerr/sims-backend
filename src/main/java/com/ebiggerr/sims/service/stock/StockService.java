@@ -78,7 +78,7 @@ public class StockService {
      * @param addQuantity quantity of the replenishment
      * @return status of the operation, successful : true ? false
      */
-    public boolean AddStockForAnItem(String skunumber, int addQuantity){
+    public boolean addStockForAnItem(String skunumber, int addQuantity){
 
         Optional<Long> id= Optional.empty();
 

@@ -39,31 +39,15 @@ public class RestockController {
 
     @PreAuthorize("hasAnyAuthority('Admin','Manager','Staff')")
     @GetMapping(path = "/inventory/stock/all")
-    public API_Response allStockInfo(){
+    public API_Response getAllStockInfo(){
 
         return new API_Response().Success( stockService.getAll() );
 
     }
 
-    /*@PreAuthorize("hasAnyAuthority('Admin','Manager')")
-    @GetMapping(path = "/inventory/stock/demand/all")
-    public API_Response allStockInfoWithDemand(){
-
-        return new API_Response().Success( stockService.getAllDemandForecastAndStockInfo() );
-
-    }*/
-
-    /*@PreAuthorize("hasAnyAuthority('Admin','Manager')")
-    @GetMapping(path = "/inventory/stock/demand/{skunumber}")
-    public API_Response viewAStockWithDemand(@PathVariable String skunumber){
-
-        return new API_Response().Success( *//*stockService.getAll()*//* );
-
-    }*/
-
     @PreAuthorize("hasAnyAuthority('Admin','Manager')")
     @PutMapping(path = "/inventory/restock")
-    public API_Response restock(@RequestParam(name ="skunumber")String skunumber, @RequestParam(name ="quantity")int quantity ){
+    public API_Response restockAnItemWithGivenSKUAndQuantity(@RequestParam(name ="skunumber")String skunumber, @RequestParam(name ="quantity")int quantity ){
 
         boolean success= stockService.restockWithGivenQuantity(skunumber,quantity);
 
@@ -75,9 +59,9 @@ public class RestockController {
 
     @PreAuthorize("hasAnyAuthority('Admin','Manager')")
     @PutMapping(path = "/inventory/addStock")
-    public API_Response addStockForItem(@RequestParam(name ="skunumber")String skunumber, @RequestParam(name ="quantity")int quantity ){
+    public API_Response addStockForItemWithGivenSKUAndQuantity(@RequestParam(name ="skunumber")String skunumber, @RequestParam(name ="quantity")int quantity ){
 
-        boolean success= stockService.AddStockForAnItem(skunumber,quantity);
+        boolean success= stockService.addStockForAnItem(skunumber,quantity);
 
         if( success) return new API_Response().Success();
 
