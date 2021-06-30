@@ -46,7 +46,7 @@ public interface AccountAuthenticationRepo extends JpaRepository<AccountAuthenti
             "FROM accountauthentication aA INNER JOIN accountrole aR on aA.accountid=aR.accountid " +
             "INNER JOIN roledetails rD on aR.roleid=rD.roleid " +
             "WHERE aA.accountstatus='APPROVED'",nativeQuery=true)
-    List<AccountAuthentication> getAll();
+    List<AccountAuthentication> getAllApprovedAccountInTheDatabaseWithJoinedAccountRoleAndRoleDetails();
 
     /**
      * Return one @entity accountauthentication with the condition of matching username with
@@ -58,7 +58,7 @@ public interface AccountAuthenticationRepo extends JpaRepository<AccountAuthenti
             "FROM accountauthentication aA INNER JOIN accountrole aR on aA.accountid=aR.accountid " +
             "INNER JOIN roledetails rD on aR.roleid=rD.roleid " +
             "WHERE aA.accountstatus='APPROVED' AND aA.accountusername=?",nativeQuery=true)
-    AccountAuthentication findaccountAutheticationWithAccountRolesAndRoleDetailsByAccountUsername(String accountUsername);
+    AccountAuthentication getApprovedAccountInTheDatabaseWithJoinedAccountRoleAndRoleDetailsWithGivenAccountUsername(String accountUsername);
 
 
     /**
@@ -68,7 +68,7 @@ public interface AccountAuthenticationRepo extends JpaRepository<AccountAuthenti
     @Modifying
     @Transactional
     @Query( value="UPDATE accountauthentication SET accountstatus='APPROVED' WHERE accountusername=?1", nativeQuery=true)
-    void approveAccountByUsername(String username);
+    void updateAnPendingAccountInTheDatabaseToApprovedStatusInAccountStatus(String username);
 
 
 }

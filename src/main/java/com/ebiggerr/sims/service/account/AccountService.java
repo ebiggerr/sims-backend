@@ -24,12 +24,15 @@ package com.ebiggerr.sims.service.account;
 
 import com.ebiggerr.sims.domain.AccountAuthentication;
 import com.ebiggerr.sims.domain.account.AccountEntity;
+import com.ebiggerr.sims.enumeration.AccountStatus;
 import com.ebiggerr.sims.repository.AccRoleRepo;
 import com.ebiggerr.sims.repository.AccountAuthenticationRepo;
 import com.ebiggerr.sims.repository.AccountRepo;
 import com.ebiggerr.sims.repository.RoleDetailsRepo;
 import com.ebiggerr.sims.service.IdService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -62,9 +65,10 @@ public class AccountService {
      * @param password password of the account
      * @return [boolean] status of the operation successful : true ? false
      */
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean registerAccount(String username,String password){
 
-        Optional<String> duplicate = accountRepo.getIDByUsernameSearchDuplicates(username);
+        Optional<String> duplicate = accountRepo.getDuplicatesIfThereIsAnyWithGivenUsername(username);
 
         //duplicates of username
         if( duplicate.isPresent() ) return false;
@@ -75,9 +79,18 @@ public class AccountService {
         // extract abc as the username of the account
         username = username.split("@")[0];
 
-        String latestID=accountRepo.getMaxID();
-        String newID= IdService.idIncrement(latestID);
-        accountRepo.registerAccount(newID,username,password,email);
+        String latestId=accountRepo.getMaxId();
+        String newId= IdService.idIncrement(latestId);
+        //accountRepo.insertANewRecordInTheAccountAuthenticationTableInTheDatabaseWithPendingAccountStatusAsDefault(newID,username,password,email);
+
+        AccountEntity newAccount = new AccountEntity();
+        newAccount.setAccountID(newId);
+        newAccount.setAccountUsername(username);
+        newAccount.setAccountPassword(password);
+        newAccount.setAccountStatus(AccountStatus.PENDING);
+        newAccount.setAccountEmail(email);
+
+        accountRepo.save(newAccount);
 
         return true;
     }
@@ -90,19 +103,19 @@ public class AccountService {
      * @param username account's username
      */
     public void updateLastLoginTime(String username){
-        accountRepo.loginUpdateLastLogin( LocalDateTime.now() ,username);
+        accountRepo.updateTheLastLoginTimestampOfARecordInTheAccountAuthenticationTableWithGivenUsername( LocalDateTime.now() ,username);
     }
 
-    public void logout(String accountUsername){
-        accountRepo.logoutUpdateLastActive( LocalDateTime.now(),accountUsername);
+    public void updateLastActiveTime(String accountUsername){
+        accountRepo.updateTheLastActiveTimestampOfARecordInTheAccountAuthenticationTableWithGivenUsername( LocalDateTime.now(),accountUsername);
     }
 
     public boolean revokeAnAccount(String accountUsername){
 
-        Optional<String> id = accountRepo.getIDByUsername(accountUsername);
+        Optional<String> id = accountRepo.getAccountIdOfAnApprovedAccountWithGivenUsername(accountUsername);
 
         if( id.isPresent() ){
-            accountRepo.revokeUsingUsername(accountUsername);
+            accountRepo.updateTheAccountStatusOfARecordInAccountAuthenticationToRevokedWithGivenUsername(accountUsername);
             return true;
         }
         else{
@@ -112,13 +125,13 @@ public class AccountService {
 
     public AccountAuthentication getByUsername(String username) {
 
-        return accountAuthenticationRepo.findaccountAutheticationWithAccountRolesAndRoleDetailsByAccountUsername(username);
+        return accountAuthenticationRepo.getApprovedAccountInTheDatabaseWithJoinedAccountRoleAndRoleDetailsWithGivenAccountUsername(username);
 
     }
 
     public List<AccountEntity> getAllPending(){
 
-        Optional<List<AccountEntity>> list= accountRepo.getAllPending();
+        Optional<List<AccountEntity>> list= accountRepo.getAllPendingAccountsInAccountAuthenticationTable();
         if( list.isPresent() ){
             return list.get();
         }
@@ -144,7 +157,7 @@ public class AccountService {
         int counter=0;
 
         //get accountID using username
-        Optional<String> accountID = accountRepo.getIDByUsername(username);
+        Optional<String> accountID = accountRepo.getAccountIdOfAnApprovedAccountWithGivenUsername(username);
 
         if( !accountID.isEmpty() ) {
 
@@ -184,7 +197,7 @@ public class AccountService {
         int counter=0;
         Optional<String> roleName;
 
-        Optional<String> accountID= accountRepo.getIDByUsername(username);
+        Optional<String> accountID= accountRepo.getAccountIdOfAnApprovedAccountWithGivenUsername(username);
 
         if( accountID.isPresent() ) {
 
@@ -222,14 +235,14 @@ public class AccountService {
      */
     public boolean approveAnAccount(String username){
 
-        Optional<String> id = accountRepo.getIDByUsernamePending(username);
+        Optional<String> id = accountRepo.getAccountIdOfAnPendingAccountWithGivenUsername(username);
 
         if(id.isEmpty() ){
             return false;
         }
         else{
             //update the accountStatus from "PENDING" to "APPROVED"
-            accountAuthenticationRepo.approveAccountByUsername(username);
+            accountAuthenticationRepo.updateAnPendingAccountInTheDatabaseToApprovedStatusInAccountStatus(username);
 
             //get the roleID of the BASIC_ROLE
             String roleID;

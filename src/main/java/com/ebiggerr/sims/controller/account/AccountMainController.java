@@ -165,7 +165,7 @@ public class AccountMainController {
     @PostMapping(path= "/updateLastActive" )
     public API_Response logout(@RequestBody AuthenticationRequest request, @RequestHeader (name="Authorization") String token){
 
-        accountService.logout( request.getUsername() );
+        accountService.updateLastActiveTime( request.getUsername() );
         logger.info("Logout Operation: " + tokenProvider.getUsernameFromToken(token) );
 
         return new API_Response().Success();

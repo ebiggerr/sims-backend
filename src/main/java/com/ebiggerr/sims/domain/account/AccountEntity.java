@@ -22,7 +22,11 @@
 
 package com.ebiggerr.sims.domain.account;
 
+import com.ebiggerr.sims.enumeration.AccountStatus;
+import com.ebiggerr.sims.enumeration.PostgreSQLEnumType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -32,11 +36,15 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name="accountauthentication")
+@TypeDef(
+        name = "pgsql_enum",
+        typeClass = PostgreSQLEnumType.class
+)
 public class AccountEntity {
 
     @Id
     @Column(name="accountid")
-    //@GeneratedValue(strategy = GenerationType.SEQUENCE)
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private String accountID;
 
     @Column(name="accountusername")
@@ -46,8 +54,10 @@ public class AccountEntity {
     @Column(name="accountpassword")
     private String accountPassword;
 
-    @Column(name ="accountstatus")
-    private String AccountStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "accountstatus")
+    @Type( type = "pgsql_enum" )
+    private AccountStatus accountStatus;
 
     @Column(name = "lastactive", nullable = true)
     private LocalDateTime lastActive;
@@ -55,29 +65,22 @@ public class AccountEntity {
     @Column(name="lastlogin", nullable = true)
     private LocalDateTime lastLogin;
 
+    @Column(name="accountemail")
+    private String accountEmail;
+
     public AccountEntity(){
 
     }
 
-    public AccountEntity(String accountID, String accountUsername, String accountPassword, String accountStatus, LocalDateTime lastActive, LocalDateTime lastLogin) {
+    public AccountEntity(String accountID, String accountUsername, String accountPassword, AccountStatus accountStatus, LocalDateTime lastActive, LocalDateTime lastLogin, String accountEmail) {
         this.accountID = accountID;
         this.accountUsername = accountUsername;
         this.accountPassword = accountPassword;
-        AccountStatus = accountStatus;
+        this.accountStatus = accountStatus;
         this.lastActive = lastActive;
         this.lastLogin = lastLogin;
+        this.accountEmail = accountEmail;
     }
-
-    /*   public account getAccountFromDTO(){
-
-        account acc=new account();
-        acc.setAccountID(accountID);
-        acc.setAccountUsername(accountUsername);
-        acc.setAccountPassword(accountPassword);
-
-        return acc;
-
-    }*/
 
     public String getAccountID() {
         return accountID;
@@ -103,12 +106,12 @@ public class AccountEntity {
         this.accountPassword = accountPassword;
     }
 
-    public String getAccountStatus() {
-        return AccountStatus;
+    public AccountStatus getAccountStatus() {
+        return accountStatus;
     }
 
-    public void setAccountStatus(String accountStatus) {
-        AccountStatus = accountStatus;
+    public void setAccountStatus(AccountStatus accountStatus) {
+        this.accountStatus = accountStatus;
     }
 
     public LocalDateTime getLastActive() {
@@ -125,5 +128,13 @@ public class AccountEntity {
 
     public void setLastLogin(LocalDateTime lastLogin) {
         this.lastLogin = lastLogin;
+    }
+
+    public String getAccountEmail() {
+        return accountEmail;
+    }
+
+    public void setAccountEmail(String accountEmail) {
+        this.accountEmail = accountEmail;
     }
 }

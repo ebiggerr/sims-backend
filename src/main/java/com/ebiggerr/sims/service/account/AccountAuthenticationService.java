@@ -62,7 +62,7 @@ public class AccountAuthenticationService implements UserDetailsService /*,UserS
     public AccountAuthentication_UserDetails loadUserByUsername(String accountUsername) {
 
         //returns an object with record from database using the data access methods in accountauthenticationRepo
-        AccountAuthentication accountauthentication = accountAuthenticationRepo.findaccountAutheticationWithAccountRolesAndRoleDetailsByAccountUsername(accountUsername);
+        AccountAuthentication accountauthentication = accountAuthenticationRepo.getApprovedAccountInTheDatabaseWithJoinedAccountRoleAndRoleDetailsWithGivenAccountUsername(accountUsername);
 
         if( accountauthentication == null ){
             throw new UsernameNotFoundException("User Not Found.");
@@ -83,7 +83,7 @@ public class AccountAuthenticationService implements UserDetailsService /*,UserS
     public List<AccountAuthenticationDTO> getAllAccountInfoWithRoles(){
 
         // mapping to DTO from entity to eliminate Sensitive credentials such as password
-        return accMapper.entitiesToDTO( accountAuthenticationRepo.getAll() );
+        return accMapper.entitiesToDTO( accountAuthenticationRepo.getAllApprovedAccountInTheDatabaseWithJoinedAccountRoleAndRoleDetails() );
     }
 
 }
