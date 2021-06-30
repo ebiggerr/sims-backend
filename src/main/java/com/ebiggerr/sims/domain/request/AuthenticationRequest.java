@@ -20,36 +20,33 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain.request;
 
-import javax.persistence.*;
+public class AuthenticationRequest {
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+    private String username;
+    private String password;
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
-
-    @Id
-    @Column(name="roleid")
-    private String roleId;
-
-    public String getAccountId() {
-        return accountId;
+    public AuthenticationRequest(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public String getUsername() {
+        return username;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public String getPassword() {
+        return password;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 }

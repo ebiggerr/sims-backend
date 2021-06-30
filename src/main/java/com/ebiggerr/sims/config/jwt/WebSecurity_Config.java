@@ -22,7 +22,7 @@
 
 package com.ebiggerr.sims.config.jwt;
 
-import com.ebiggerr.sims.service.account.accountAuthenticationService;
+import com.ebiggerr.sims.service.account.AccountAuthenticationService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,12 +43,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurity_Config extends WebSecurityConfigurerAdapter {
 
     //@Resource(name="accountAuthenticationService")
-    private final accountAuthenticationService accountAuthenticationService;
+    private final AccountAuthenticationService accountAuthenticationService;
 
     private final UnauthorizedEntryPoint unauthorizedEntryPoint;
 
     //@Autowired
-    public WebSecurity_Config(accountAuthenticationService accountAuthenticationService, UnauthorizedEntryPoint unauthorizedEntryPoint) {
+    public WebSecurity_Config(AccountAuthenticationService accountAuthenticationService, UnauthorizedEntryPoint unauthorizedEntryPoint) {
         this.unauthorizedEntryPoint = unauthorizedEntryPoint;
         this.accountAuthenticationService = accountAuthenticationService;
     }

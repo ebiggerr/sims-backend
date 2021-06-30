@@ -20,36 +20,67 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
+/**
+ *
+ */
 @Entity
-@IdClass(AccountIdRoleId.class)
+//@IdClass(accountIdRoleId.class)
 @Table(name="accountrole")
-public class AccountRole {
+public class AccountRoleJoin implements Serializable {
 
+    @JsonIgnore
     @Id
     @Column(name="accountid")
-    private String accountId;
+    private String accountID;
 
+    @JsonIgnore
     @Id
     @Column(name="roleid")
-    private String roleId;
+    private String roleID;
 
-    public String getAccountId() {
-        return accountId;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "roleid", nullable = false)
+    private RoleDetails roleDetailsSet;
+
+    public String getAccountID() {
+        return accountID;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setAccountID(String accountID) {
+        this.accountID = accountID;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public String getRoleID() {
+        return roleID;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setRoleID(String roleID) {
+        this.roleID = roleID;
     }
+
+    public RoleDetails getRoleDetailsSet() {
+        return roleDetailsSet;
+    }
+
+    public void setRoleDetailsSet(RoleDetails roleDetailsSet) {
+        this.roleDetailsSet = roleDetailsSet;
+    }
+
+  /*  @Override
+    public String toString(){
+
+        return "The account ID is: " + this.getAccountID()
+                + " with role ID of " + this.getRoleID()
+                + " with Role Name of " + this.getRoleDetailsSet().toString();
+
+    };*/
+
+
 }

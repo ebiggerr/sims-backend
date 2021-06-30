@@ -20,36 +20,15 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.repository;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.dashboard.TotalAssets;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+public interface TotalAssetsRepo extends JpaRepository<TotalAssets,String> {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
+    @Query(value="SELECT SUM( stock.quantitycount * listing.itemunitprice ) AS totalassets FROM itemlisting listing join inventorystock stock on listing.itemid = stock.itemid",nativeQuery=true)
+    String gettotalassets();
 }

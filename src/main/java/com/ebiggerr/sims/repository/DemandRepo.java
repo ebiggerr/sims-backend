@@ -19,37 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.ebiggerr.sims.repository;
 
-package com.ebiggerr.sims.domain.account;
+import com.ebiggerr.sims.domain.demand.Demand;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
+import java.util.List;
+import java.util.Optional;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Repository
+public interface DemandRepo extends JpaRepository<Demand,String> {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+    @Query(value="select extract( month FROM date_trunc('month',timestamp) ) as mon, sum(quantity) from saleshistory where timestamp > (current_date - interval '2 months') and itemid= ?1 group by mon order by mon asc" , nativeQuery=true)
+    List<Demand> getHistoricalSales3Months(long itemid);
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
+    @Query(value="select extract( month FROM date_trunc('month',timestamp) ) as mon, sum(quantity) from saleshistory where timestamp > (current_date - interval '2 months') and itemid= ?1 group by mon order by mon asc" , nativeQuery=true)
+    Optional< List<Demand> > getHistoricalSales3MonthsB(long itemid);
 }

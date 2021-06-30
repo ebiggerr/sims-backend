@@ -20,36 +20,41 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain.sales;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Table(name= "historicalsales2015")
+public class HistoricalSales implements Serializable {
 
     @Id
-    @Column(name="accountid")
-    private String accountId;
+    @Column(name = "month")
+    private LocalDate month;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Column(name="salesnumber", nullable = true)
+    private Integer salesNumber;
 
-    public String getAccountId() {
-        return accountId;
+
+    public LocalDate getMonth() {
+        return month;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setMonth(LocalDate month) {
+        this.month = month;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public Integer getSalesNumber() {
+        if( salesNumber == null )return 0;
+        return salesNumber;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setSalesNumber(Integer salesNumber) {
+        this.salesNumber = salesNumber;
     }
 }

@@ -19,37 +19,24 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.ebiggerr.sims.repository;
 
-package com.ebiggerr.sims.domain.account;
+import com.ebiggerr.sims.domain.sales.HistoricalSales;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-import javax.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Repository
+public interface HistoricalSalesRepo extends JpaRepository<HistoricalSales, Long> {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Query(value="SELECT * FROM ( SELECT month"+"\\:\\:" +"date FROM generate_series( ?1 , ?2 ,interval '1 month') month) d LEFT JOIN ( SELECT date_trunc('month', h.timestamp)"+ "\\:\\:" + "date AS month, COALESCE(sum( h.quantity), '0') AS salesnumber FROM historicalsales2015 h WHERE h.timestamp >= ?3 AND h.timestamp <= ?4 GROUP BY 1 ) t USING (month) ORDER BY month", nativeQuery=true)
+    List<HistoricalSales> getByMonthsInAYearLocalDate(LocalDate seriesStartDate,
+                                                      LocalDate seriesEndDate,
+                                                      LocalDate yearFirstDate,
+                                                      LocalDate yearLastDate);
 
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
 }

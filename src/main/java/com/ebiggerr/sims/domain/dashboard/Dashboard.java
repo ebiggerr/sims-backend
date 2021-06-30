@@ -20,36 +20,33 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain.dashboard;
 
-import javax.persistence.*;
+import java.util.List;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+public class Dashboard {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+    private List<Category> category;
+    private String totalassets;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
-
-    public String getAccountId() {
-        return accountId;
+    public Dashboard(List<Category> list, String totalassets){
+        this.category=list;
+        this.totalassets=totalassets;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public List<Category> getCategory() {
+        return category;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public void setCategory(List<Category> category) {
+        this.category = category;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public String getTotalassets() {
+        return totalassets;
+    }
+
+    public void setTotalassets(String totalassets) {
+        this.totalassets = totalassets;
     }
 }

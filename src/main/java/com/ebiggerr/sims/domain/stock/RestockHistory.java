@@ -20,36 +20,49 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain.stock;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Table(name="restockhistory")
+public class RestockHistory {
 
     @Id
-    @Column(name="accountid")
-    private String accountId;
+    @Column(name="itemid")
+    private Long itemid;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Column(name="quantity")
+    private int quantity;
 
-    public String getAccountId() {
-        return accountId;
+    @Column(name="restocktime")
+    private LocalDateTime restockTime;
+
+    public Long getItemid() {
+        return itemid;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setItemid(Long itemid) {
+        this.itemid = itemid;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public LocalDateTime getRestockTime() {
+        return restockTime;
+    }
+
+    public void setRestockTime(LocalDateTime restockTime) {
+        this.restockTime = restockTime;
     }
 }

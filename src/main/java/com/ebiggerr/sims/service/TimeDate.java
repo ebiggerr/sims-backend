@@ -20,36 +20,32 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.service;
 
-import javax.persistence.*;
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+public class TimeDate {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+    private static final DateFormat dateFormat=new SimpleDateFormat("dd-MM-yyyy");
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    public static String convertFromTimeStamp(Timestamp timestamp){
 
-    public String getAccountId() {
-        return accountId;
+        Date date=new Date(timestamp.getTime());
+
+        String dateString= dateFormat.format(date);
+
+        return dateString;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
+    public static String convertFromUnixTimeStamp(Long unixTimeStamp){
 
-    public String getRoleId() {
-        return roleId;
-    }
+        Date date=new Date(unixTimeStamp);
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+        String dateTime = dateFormat.format(date);
+
+        return dateTime;
     }
 }

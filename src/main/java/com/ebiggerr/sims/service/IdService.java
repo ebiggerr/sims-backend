@@ -20,36 +20,39 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.service;
 
-import javax.persistence.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+public class IdService {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+    /**
+     * <h1> Create a new id by doing increment on the previous max id in the database </h1>
+     * For example : A6 to A7, A2323 to A2324
+     *
+     * @param id max id from database
+     * @return new id that is increment from the previous max id
+     */
+    public static String idIncrement(String id){
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+        String alphabet = null;
+        String digit = null;
+        int increment = 0;
 
-    public String getAccountId() {
-        return accountId;
-    }
+        Pattern pattern=Pattern.compile("([a-zA-Z]+)(\\d+)");
+        Matcher matcher=pattern.matcher(id);
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
+        if( matcher.find() && matcher.groupCount() ==2 ){
+            alphabet=matcher.group(1);
+            digit=matcher.group(2);
 
-    public String getRoleId() {
-        return roleId;
-    }
+            increment= Integer.parseInt(digit);
+            increment++;
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+            digit= String.valueOf(increment);
+        }
+
+        return alphabet+digit;
     }
 }

@@ -19,37 +19,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.ebiggerr.sims.repository;
 
-package com.ebiggerr.sims.domain.account;
+import com.ebiggerr.sims.domain.account.AccountRole;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
+import java.util.Optional;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Repository
+public interface AccRoleRepo extends JpaRepository<AccountRole,String> {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+    @Modifying
+    @Transactional
+    @Query( value= "INSERT INTO accountrole (accountid,roleid) VALUES ( ?1,?2 ) ON CONFLICT (accountid,roleid) DO NOTHING", nativeQuery=true)
+    void addNewRecord(String accountID, String roleID);
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Modifying
+    @Transactional
+    @Query( value= "DELETE FROM accountrole WHERE accountid=?1 AND roleid=?2", nativeQuery=true)
+    void revokeRoles(String accountID, String roleID);
 
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
+    @Query( value= "SELECT accountid FROM accountrole WHERE accountid=?1 AND roleid=?2", nativeQuery=true)
+    Optional<String> search (String accountID, String roleID);
 }

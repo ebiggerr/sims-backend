@@ -66,8 +66,8 @@ public class JWTAuthentication_Filter extends OncePerRequestFilter {
             authToken = header.replace("Bearer","").trim(); //extract the token String by eliminate the "Bearer"
 
             try{
-                Token_Provider provider = new Token_Provider();
-                decodedJWT = provider.verifyAndDecodeToken(authToken);
+                Token_Provider tokenProvider = new Token_Provider();
+                decodedJWT = tokenProvider.verifyAndDecodeToken(authToken);
                 username = decodedJWT.getClaim("username").asString();
 
             }catch ( JWTVerificationException jwtVerificationException){

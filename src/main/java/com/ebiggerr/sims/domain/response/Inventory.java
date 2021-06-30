@@ -20,36 +20,45 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain.response;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.inventory.ItemDTO;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+import java.util.List;
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+public class Inventory {
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    private int currentpage;
+    private int totalpage;
+    List<ItemDTO> list;
 
-    public String getAccountId() {
-        return accountId;
+    public Inventory(int currentpage, int totalpage, List<ItemDTO> list){
+        this.currentpage=currentpage;
+        this.totalpage=totalpage;
+        this.list=list;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public int getCurrentpage() {
+        return currentpage;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public void setCurrentpage(int currentpage) {
+        this.currentpage = currentpage;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public int getTotalpage() {
+        return totalpage;
+    }
+
+    public void setTotalpage(int totalpage) {
+        this.totalpage = totalpage;
+    }
+
+    public List<ItemDTO> getList() {
+        return list;
+    }
+
+    public void setList(List<ItemDTO> list) {
+        this.list = list;
     }
 }

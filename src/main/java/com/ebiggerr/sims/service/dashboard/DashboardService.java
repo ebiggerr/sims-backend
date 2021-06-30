@@ -20,36 +20,33 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.service.dashboard;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.dashboard.Dashboard;
+import com.ebiggerr.sims.repository.CategoryRepo;
+import com.ebiggerr.sims.repository.TotalAssetsRepo;
+import org.springframework.stereotype.Service;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Service
+public class DashboardService {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+    private final CategoryRepo categoryRepo;
+    private final TotalAssetsRepo totalassetsRepo;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
-
-    public String getAccountId() {
-        return accountId;
+    public DashboardService(CategoryRepo categoryRepo, TotalAssetsRepo totalassetsRepo){
+        this.categoryRepo=categoryRepo;
+        this.totalassetsRepo=totalassetsRepo;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
+    /**
+     *
+     * <h1> Result composition of items by categorical and sum() count , total asset of the inventory</h1>
+     *
+     * @return result wrapped in @dashboard class
+     */
+    public Dashboard getAnalytics(){
 
-    public String getRoleId() {
-        return roleId;
-    }
+        return new Dashboard( categoryRepo.getCategoricalAnalytics(), totalassetsRepo.gettotalassets() );
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
     }
 }

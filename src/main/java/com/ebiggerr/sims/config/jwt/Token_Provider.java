@@ -28,7 +28,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.ebiggerr.sims.domain.accountAuthentication_UserDetails;
+import com.ebiggerr.sims.domain.AccountAuthentication_UserDetails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -69,16 +69,16 @@ public class Token_Provider extends JWT {
 
         final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
-        Instant nowEp = Instant.now();
-        Date now = Date.from(nowEp);
+        Instant nowEpoch = Instant.now();
+        Date now = Date.from(nowEpoch);
         // 30 minutes Expiration Duration
-        Date exp = Date.from(nowEp.plus(30, ChronoUnit.MINUTES));
+        Date exp = Date.from(nowEpoch.plus(30, ChronoUnit.MINUTES));
 
         // extract username from Authentication object
         Object principal = authentication.getPrincipal();
         String username;
-        if (principal instanceof accountAuthentication_UserDetails) {
-             username = ((accountAuthentication_UserDetails)principal).getUsername();
+        if (principal instanceof AccountAuthentication_UserDetails) {
+             username = ((AccountAuthentication_UserDetails)principal).getUsername();
         } else {
             username = principal.toString();
         }

@@ -20,36 +20,36 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.mapper;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.stock.Stock;
+import com.ebiggerr.sims.domain.stock.StockDTO;
+import com.ebiggerr.sims.service.DemandService;
+import org.springframework.stereotype.Component;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+import java.util.List;
+import java.util.stream.Collectors;
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+@Component
+public class StockConverter {
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    private final DemandService demandService;
 
-    public String getAccountId() {
-        return accountId;
+    public StockConverter(DemandService demandService) {
+        this.demandService = demandService;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    //TODO 08 June 2021
+    public StockDTO entityToDTO(Stock stock){
+
+        return demandService.populateDTOUsingDemandService(stock);
     }
 
-    public String getRoleId() {
-        return roleId;
+    //TODO 08 June 2021
+    public List<StockDTO> entitiesToDTO(List<Stock> stockList){
+
+        return stockList.stream().map(this::entityToDTO).collect(Collectors.toList());
+
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
 }

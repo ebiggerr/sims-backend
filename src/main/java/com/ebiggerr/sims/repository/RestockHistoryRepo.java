@@ -20,36 +20,23 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.repository;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.stock.RestockHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+import java.time.LocalDateTime;
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+@Repository
+public interface RestockHistoryRepo extends JpaRepository<RestockHistory,Long> {
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Modifying
+    @Transactional
+    @Query(value=" INSERT INTO restockhistory (itemid,quantity,restocktime) VALUES (?1,?2,?3)", nativeQuery=true)
+    void addNewHistory(Long itemid, int quantity, LocalDateTime restockTime);
 
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
 }

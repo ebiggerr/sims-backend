@@ -20,36 +20,46 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain.demand;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Table(name="saleshistory")
+public class Demand {
 
     @Id
-    @Column(name="accountid")
-    private String accountId;
+    @Column(name="mon")
+    private String monthInNumber;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Column(name="sum")
+    private double value;
 
-    public String getAccountId() {
-        return accountId;
+    public Demand(){
+
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public Demand(String monthInNumber, double value) {
+        this.monthInNumber=monthInNumber;
+        this.value=value;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public String getMonthInNumber() {
+        return monthInNumber;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setMonthInNumber(String monthInNumber) {
+        this.monthInNumber = monthInNumber;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public void setValue(double value) {
+        this.value = value;
     }
 }

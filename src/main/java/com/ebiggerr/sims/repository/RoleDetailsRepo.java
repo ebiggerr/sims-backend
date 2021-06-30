@@ -20,36 +20,18 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.repository;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.RoleDetails;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+import java.util.Optional;
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+public interface RoleDetailsRepo extends JpaRepository<RoleDetails,String> {
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Query(value="SELECT roleid FROM roledetails WHERE rolename=?1", nativeQuery= true)
+    Optional<String> getRoleIDByRoleName(String roleName);
 
-    public String getAccountId() {
-        return accountId;
-    }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
 }

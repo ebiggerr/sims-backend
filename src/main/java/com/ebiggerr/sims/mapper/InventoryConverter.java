@@ -20,36 +20,37 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.mapper;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.inventory.Item;
+import com.ebiggerr.sims.domain.inventory.ItemDTO;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+import java.util.List;
+import java.util.stream.Collectors;
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+public class InventoryConverter {
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    public ItemDTO entityToDTO(Item item){
 
-    public String getAccountId() {
-        return accountId;
+        ItemDTO dto= new ItemDTO();
+        dto.setId(item.getId());
+        dto.setSKU(item.getSKU());
+        dto.setImagePath(item.getImagePath());
+        dto.setThumbnailImagePath(item.getImagePath()); //append "-thumbnail" to the string
+        dto.setItemName(item.getItemName());
+        dto.setDimensions(item.getDimensions());
+        dto.setVolume(item.getVolume());;
+        dto.setItemDescription(item.getItemDescription());
+        dto.setUnitPrice( item.getUnitPrice() );
+
+        return dto;
+
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
-    }
+    public List<ItemDTO> entitiesToDTO(List<Item> itemList){
 
-    public String getRoleId() {
-        return roleId;
-    }
+        return itemList.stream().map(this::entityToDTO).collect(Collectors.toList());
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
     }
 }
+

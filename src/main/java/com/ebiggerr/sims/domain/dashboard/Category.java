@@ -20,36 +20,51 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain.dashboard;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Table(name = "itemcategory")
+public class Category {
 
     @Id
-    @Column(name="accountid")
-    private String accountId;
+    //@JsonIgnore
+    @Column(name = "categoryid")
+    private Long id;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
+    @Column(name="categoryname")
+    private String categoryName;
 
-    public String getAccountId() {
-        return accountId;
+    // aggregated field from the categoryRepo
+    // getCategoricalAnalytics()
+    @Column(name="value", nullable = true)
+    private String value;
+
+    public Long getId() {
+        return id;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public String getCategoryName() {
+        return categoryName;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
     }
 }
+

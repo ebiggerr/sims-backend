@@ -20,36 +20,35 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.controller.dashboard;
 
-import javax.persistence.*;
+import com.ebiggerr.sims.domain.response.API_Response;
+import com.ebiggerr.sims.service.dashboard.DashboardService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@RestController
+public class DashboardMainController {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
+    private final DashboardService dashboardService;
 
-    @Id
-    @Column(name="roleid")
-    private String roleId;
-
-    public String getAccountId() {
-        return accountId;
+    public DashboardMainController(DashboardService dashboardService){
+        this.dashboardService=dashboardService;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    /**
+     * <h1> Dashboard </h1>
+     *
+     * Analytics information for dashboard module
+     *
+     * @return Information wrapped in dashboard object
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @GetMapping(path = "/analytics/all")
+    public API_Response getAllAnalytics(){
+
+        return new API_Response().Success( dashboardService.getAnalytics() );
     }
 
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
 }

@@ -22,34 +22,30 @@
 
 package com.ebiggerr.sims.domain.account;
 
-import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
-@Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+public class AccountIdRoleId implements Serializable {
 
-    @Id
-    @Column(name="accountid")
     private String accountId;
-
-    @Id
-    @Column(name="roleid")
     private String roleId;
 
-    public String getAccountId() {
-        return accountId;
+    public AccountIdRoleId(String accountID, String roleID) {
+        this.accountId = accountID;
+        this.roleId = roleID;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountIdRoleId that = (AccountIdRoleId) o;
+        return accountId.equals(that.accountId) &&
+                roleId.equals(that.roleId);
     }
 
-    public String getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    @Override
+    public int hashCode() {
+        return Objects.hash(accountId, roleId);
     }
 }
