@@ -124,7 +124,7 @@ public class AccountMainController {
             logger.info("JWT Token generated for user: " + request.getUsername() );
 
             //return JWT wrapped in the response
-            return new API_Response().Success( new JWTToken( tokenProvider.generateTokenAuthentication(authentication) ) );
+            return new API_Response().Success( new JWTToken( tokenProvider.generateToken(authentication) ) );
         }
 
         return new API_Response().UserNotFound();

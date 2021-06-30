@@ -63,9 +63,7 @@ public class Token_Provider extends JWT {
      * Claims: Issuer, IssuedAt, ExpiredAt, Username, Roles
      *
      */
-    public String generateTokenAuthentication(Authentication authentication){
-
-        //algorithm = Algorithm.HMAC256(privateKey);
+    public String generateToken(Authentication authentication){
 
         final String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
 
