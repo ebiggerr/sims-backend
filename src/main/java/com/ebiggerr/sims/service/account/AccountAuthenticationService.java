@@ -80,9 +80,10 @@ public class AccountAuthenticationService implements UserDetailsService /*,UserS
      *
      * @return [List  &lt;accountAuthenticationDTO&gt; ] : List of all the active AND approved accounts
      */
-    public List<AccountAuthenticationDTO> getAllAccountInfoWithRoles(){
+    public List<AccountAuthenticationDTO> getAllApprovedAccountInfoWithRoles(){
 
         // mapping to DTO from entity to eliminate Sensitive credentials such as password
+        //parse the roles in Sets type to Collection of String type
         return accMapper.entitiesToDTO( accountAuthenticationRepo.getAllApprovedAccountInTheDatabaseWithJoinedAccountRoleAndRoleDetails() );
     }
 

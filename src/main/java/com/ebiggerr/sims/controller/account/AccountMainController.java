@@ -196,7 +196,7 @@ public class AccountMainController {
     @GetMapping(path="/account/details/allActive")
     public API_Response getAllActiveAccountDetails(){
 
-        List<AccountAuthenticationDTO> found = accountAuthenticationService.getAllAccountInfoWithRoles();
+        List<AccountAuthenticationDTO> found = accountAuthenticationService.getAllApprovedAccountInfoWithRoles();
 
         if( found != null ) return new API_Response().Success( found );
         return new API_Response().Failed("Not Found");
