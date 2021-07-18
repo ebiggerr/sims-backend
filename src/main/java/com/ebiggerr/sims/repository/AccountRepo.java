@@ -59,19 +59,19 @@ public interface AccountRepo extends JpaRepository <AccountEntity,String> {
     void insertANewRecordInTheAccountAuthenticationTableInTheDatabaseWithPendingAccountStatusAsDefault(@Param("userID")String userID, @Param("username")String username, @Param("password")String encodedPassword, @Param("accountemail")String email);
 */
     @Modifying
-    //@Transactional
+    @Transactional
     @Query( value="UPDATE accountauthentication SET lastactive=?1 WHERE accountauthentication.accountusername=?2"
             ,nativeQuery=true)
     void updateTheLastActiveTimestampOfARecordInTheAccountAuthenticationTableWithGivenUsername(LocalDateTime timestamp, String accountUsername);
 
     @Modifying
-    //@Transactional
+    @Transactional
     @Query( value="UPDATE accountauthentication SET lastlogin=?1 WHERE accountauthentication.accountusername=?2"
             ,nativeQuery=true)
     void updateTheLastLoginTimestampOfARecordInTheAccountAuthenticationTableWithGivenUsername(LocalDateTime timestamp, String accountUsername);
 
     @Modifying
-    //@Transactional
+    @Transactional
     @Query(value="UPDATE accountauthentication SET accountstatus='REVOKED' WHERE accountauthentication.accountusername=?1", nativeQuery=true)
     void updateTheAccountStatusOfARecordInAccountAuthenticationToRevokedWithGivenUsername(String username);
 
