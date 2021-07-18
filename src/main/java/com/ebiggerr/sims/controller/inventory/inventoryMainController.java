@@ -7,10 +7,10 @@ import com.ebiggerr.sims.domain.response.API_Response;
 import com.ebiggerr.sims.domain.response.demandResult;
 import com.ebiggerr.sims.domain.stock.stock;
 import com.ebiggerr.sims.service.demandService;
-import com.ebiggerr.sims.service.historicalSalesService;
 import com.ebiggerr.sims.service.input.inputCheckValid;
 import com.ebiggerr.sims.service.inventory.inventoryService;
 import com.ebiggerr.sims.service.stock.stockService;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,18 +27,15 @@ public class inventoryMainController {
 
     private final stockService stockService;
 
-    private final historicalSalesService historicalSalesService;
-
     private String message;
     private boolean valid;
     private boolean success;
 
 
-    public inventoryMainController(inventoryService inventoryService,demandService demandService,stockService stockService,historicalSalesService historicalSalesService) {
+    public inventoryMainController(inventoryService inventoryService,demandService demandService,stockService stockService) {
         this.inventoryService = inventoryService;
         this.demandService=demandService;
         this.stockService=stockService;
-        this.historicalSalesService=historicalSalesService;
     }
 
     /**
@@ -211,19 +208,6 @@ public class inventoryMainController {
         return new API_Response().Success( stockService.getAllDemandForecastAndStockInfo(demandService) );
 
     }
-
-    /*@PreAuthorize("hasAnyAuthority('Admin')")
-    @GetMapping(path="/inventory/sales/{year}")
-    public API_Response getSalesForAYear(@PathVariable String year){
-
-
-        List<historicalSales> list = historicalSalesService.getSalesFromYear(year);
-
-        if( list != null ) return new API_Response().Success( list );
-        else{
-            return new API_Response().Failed("Not Record Found");
-        }
-    }*/
 
 }
 
