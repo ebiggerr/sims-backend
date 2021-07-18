@@ -20,10 +20,32 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.service;
 
-public class wekaForecaster {
+import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+public class TimeDate {
 
+    private static final DateFormat dateFormat=new SimpleDateFormat("dd-MM-yyyy");
 
+    public static String convertFromTimeStamp(Timestamp timestamp){
+
+        Date date=new Date(timestamp.getTime());
+
+        String dateString= dateFormat.format(date);
+
+        return dateString;
+    }
+
+    public static String convertFromUnixTimeStamp(Long unixTimeStamp){
+
+        Date date=new Date(unixTimeStamp);
+
+        String dateTime = dateFormat.format(date);
+
+        return dateTime;
+    }
 }

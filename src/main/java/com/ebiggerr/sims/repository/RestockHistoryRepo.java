@@ -20,10 +20,23 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.repository;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.stock.RestockHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 
+@Repository
+public interface RestockHistoryRepo extends JpaRepository<RestockHistory,Long> {
+
+    @Modifying
+    @Transactional
+    @Query(value=" INSERT INTO restockhistory (itemid,quantity,restocktime) VALUES (?1,?2,?3)", nativeQuery=true)
+    void addNewHistory(Long itemid, int quantity, LocalDateTime restockTime);
 
 }

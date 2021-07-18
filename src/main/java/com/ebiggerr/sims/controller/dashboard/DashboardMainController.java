@@ -20,10 +20,35 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.controller.dashboard;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.response.API_Response;
+import com.ebiggerr.sims.service.dashboard.DashboardService;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+public class DashboardMainController {
 
+    private final DashboardService dashboardService;
+
+    public DashboardMainController(DashboardService dashboardService){
+        this.dashboardService=dashboardService;
+    }
+
+    /**
+     * <h1> Dashboard </h1>
+     *
+     * Analytics information for dashboard module
+     *
+     * @return Information wrapped in dashboard object
+     */
+    @PreAuthorize("hasAuthority('Admin')")
+    @GetMapping(path = "/analytics/all")
+    public API_Response getAllAnalytics(){
+
+        return new API_Response().Success( dashboardService.getAnalytics() );
+    }
 
 }

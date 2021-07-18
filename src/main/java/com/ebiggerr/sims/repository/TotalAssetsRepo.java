@@ -20,10 +20,15 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.repository;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.dashboard.TotalAssets;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+public interface TotalAssetsRepo extends JpaRepository<TotalAssets,String> {
 
 
-
+    @Query(value="SELECT SUM( stock.quantitycount * listing.itemunitprice ) AS totalassets FROM itemlisting listing join inventorystock stock on listing.itemid = stock.itemid",nativeQuery=true)
+    String gettotalassets();
 }

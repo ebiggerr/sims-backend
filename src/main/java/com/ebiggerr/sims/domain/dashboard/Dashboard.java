@@ -20,10 +20,33 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.domain.dashboard;
 
-public class wekaForecaster {
+import java.util.List;
 
+public class Dashboard {
 
+    private List<Category> category;
+    private String totalassets;
 
+    public Dashboard(List<Category> list, String totalassets){
+        this.category=list;
+        this.totalassets=totalassets;
+    }
+
+    public List<Category> getCategory() {
+        return category;
+    }
+
+    public void setCategory(List<Category> category) {
+        this.category = category;
+    }
+
+    public String getTotalassets() {
+        return totalassets;
+    }
+
+    public void setTotalassets(String totalassets) {
+        this.totalassets = totalassets;
+    }
 }

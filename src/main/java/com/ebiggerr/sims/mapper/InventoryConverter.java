@@ -20,10 +20,37 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.mapper;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.inventory.Item;
+import com.ebiggerr.sims.domain.inventory.ItemDTO;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
+public class InventoryConverter {
 
+    public ItemDTO entityToDTO(Item item){
+
+        ItemDTO dto= new ItemDTO();
+        dto.setId(item.getId());
+        dto.setSKU(item.getSKU());
+        dto.setImagePath(item.getImagePath());
+        dto.setThumbnailImagePath(item.getImagePath()); //append "-thumbnail" to the string
+        dto.setItemName(item.getItemName());
+        dto.setDimensions(item.getDimensions());
+        dto.setVolume(item.getVolume());;
+        dto.setItemDescription(item.getItemDescription());
+        dto.setUnitPrice( item.getUnitPrice() );
+
+        return dto;
+
+    }
+
+    public List<ItemDTO> entitiesToDTO(List<Item> itemList){
+
+        return itemList.stream().map(this::entityToDTO).collect(Collectors.toList());
+
+    }
 }
+

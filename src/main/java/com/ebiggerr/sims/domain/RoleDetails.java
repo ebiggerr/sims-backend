@@ -20,36 +20,60 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.domain.account;
+package com.ebiggerr.sims.domain;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
-@IdClass(AccountIdRoleId.class)
-@Table(name="accountrole")
-public class AccountRole {
+@Table(name="roledetails")
+public class RoleDetails {
 
-    @Id
-    @Column(name="accountid")
-    private String accountId;
-
+    @JsonIgnore
     @Id
     @Column(name="roleid")
-    private String roleId;
+    private String roleID;
 
-    public String getAccountId() {
-        return accountId;
+    @Column(name="rolename")
+    private String roleName;
+
+    @JsonIgnore
+    @Column(name = "roledescription")
+    private String roleDescription;
+
+    public String getRoleID() {
+        return roleID;
     }
 
-    public void setAccountId(String accountId) {
-        this.accountId = accountId;
+    public void setRoleID(String roleID) {
+        this.roleID = roleID;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public String getRoleName() {
+        return roleName;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
     }
+
+    public String getRoleDescription() {
+        return roleDescription;
+    }
+
+    public void setRoleDescription(String roleDescription) {
+        this.roleDescription = roleDescription;
+    }
+
+   /* @Override
+    public String toString(){
+
+        return " The role ID is: " + this.getRoleID()
+                + " with role name of " + this.getRoleName();
+
+    };*/
 }

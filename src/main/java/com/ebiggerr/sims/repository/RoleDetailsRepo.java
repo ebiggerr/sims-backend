@@ -20,10 +20,18 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.repository;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.RoleDetails;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
+public interface RoleDetailsRepo extends JpaRepository<RoleDetails,String> {
+
+    @Query(value="SELECT roleid FROM roledetails WHERE rolename=?1", nativeQuery= true)
+    Optional<String> getRoleIDByRoleName(String roleName);
 
 
 }

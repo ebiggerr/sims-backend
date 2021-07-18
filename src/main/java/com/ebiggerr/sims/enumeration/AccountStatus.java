@@ -20,10 +20,9 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.enumeration;
 
-public class wekaForecaster {
-
-
-
+public enum AccountStatus {
+    PENDING,
+    APPROVED
 }
