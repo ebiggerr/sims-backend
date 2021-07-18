@@ -20,10 +20,33 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.service.dashboard;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.dashboard.Dashboard;
+import com.ebiggerr.sims.repository.CategoryRepo;
+import com.ebiggerr.sims.repository.TotalAssetsRepo;
+import org.springframework.stereotype.Service;
 
+@Service
+public class DashboardService {
 
+    private final CategoryRepo categoryRepo;
+    private final TotalAssetsRepo totalassetsRepo;
 
+    public DashboardService(CategoryRepo categoryRepo, TotalAssetsRepo totalassetsRepo){
+        this.categoryRepo=categoryRepo;
+        this.totalassetsRepo=totalassetsRepo;
+    }
+
+    /**
+     *
+     * <h1> Result composition of items by categorical and sum() count , total asset of the inventory</h1>
+     *
+     * @return result wrapped in @dashboard class
+     */
+    public Dashboard getAnalytics(){
+
+        return new Dashboard( categoryRepo.getCategoricalAnalytics(), totalassetsRepo.gettotalassets() );
+
+    }
 }

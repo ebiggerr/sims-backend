@@ -20,10 +20,45 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.domain.response;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.inventory.ItemDTO;
 
+import java.util.List;
 
+public class Inventory {
 
+    private int currentpage;
+    private int totalpage;
+    List<ItemDTO> list;
+
+    public Inventory(int currentpage, int totalpage, List<ItemDTO> list){
+        this.currentpage=currentpage;
+        this.totalpage=totalpage;
+        this.list=list;
+    }
+
+    public int getCurrentpage() {
+        return currentpage;
+    }
+
+    public void setCurrentpage(int currentpage) {
+        this.currentpage = currentpage;
+    }
+
+    public int getTotalpage() {
+        return totalpage;
+    }
+
+    public void setTotalpage(int totalpage) {
+        this.totalpage = totalpage;
+    }
+
+    public List<ItemDTO> getList() {
+        return list;
+    }
+
+    public void setList(List<ItemDTO> list) {
+        this.list = list;
+    }
 }

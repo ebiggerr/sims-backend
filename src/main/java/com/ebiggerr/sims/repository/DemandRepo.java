@@ -19,11 +19,22 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+package com.ebiggerr.sims.repository;
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+import com.ebiggerr.sims.domain.demand.Demand;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
-public class wekaForecaster {
+import java.util.List;
+import java.util.Optional;
 
+@Repository
+public interface DemandRepo extends JpaRepository<Demand,String> {
 
+    @Query(value="select extract( month FROM date_trunc('month',timestamp) ) as mon, sum(quantity) from saleshistory where timestamp > (current_date - interval '2 months') and itemid= ?1 group by mon order by mon asc" , nativeQuery=true)
+    List<Demand> getHistoricalSales3Months(long itemid);
 
+    @Query(value="select extract( month FROM date_trunc('month',timestamp) ) as mon, sum(quantity) from saleshistory where timestamp > (current_date - interval '2 months') and itemid= ?1 group by mon order by mon asc" , nativeQuery=true)
+    Optional< List<Demand> > getHistoricalSales3MonthsB(long itemid);
 }

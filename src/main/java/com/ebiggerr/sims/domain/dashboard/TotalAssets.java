@@ -20,10 +20,34 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.domain.dashboard;
 
-public class wekaForecaster {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table(name="itemlisting")
+public class TotalAssets {
 
+    @Id
+    @Column(name="totalassets")
+    private String totalassets;
 
+    public TotalAssets(){
+
+    }
+
+    public TotalAssets(String totalassets){
+        this.totalassets=totalassets;
+    }
+
+    public String getTotalassets() {
+        return totalassets;
+    }
+
+    public void setTotalassets(String totalassets) {
+        this.totalassets = totalassets;
+    }
 }

@@ -20,10 +20,36 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.mapper;
 
-public class wekaForecaster {
+import com.ebiggerr.sims.domain.stock.Stock;
+import com.ebiggerr.sims.domain.stock.StockDTO;
+import com.ebiggerr.sims.service.DemandService;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Component
+public class StockConverter {
+
+    private final DemandService demandService;
+
+    public StockConverter(DemandService demandService) {
+        this.demandService = demandService;
+    }
+
+    //TODO 08 June 2021
+    public StockDTO entityToDTO(Stock stock){
+
+        return demandService.populateDTOUsingDemandService(stock);
+    }
+
+    //TODO 08 June 2021
+    public List<StockDTO> entitiesToDTO(List<Stock> stockList){
+
+        return stockList.stream().map(this::entityToDTO).collect(Collectors.toList());
+
+    }
 
 }

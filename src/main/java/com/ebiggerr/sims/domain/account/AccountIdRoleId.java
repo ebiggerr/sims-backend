@@ -20,10 +20,32 @@
  * SOFTWARE.
  */
 
-package com.ebiggerr.sims.service.wekaTimeSeries;
+package com.ebiggerr.sims.domain.account;
 
-public class wekaForecaster {
+import java.io.Serializable;
+import java.util.Objects;
 
+public class AccountIdRoleId implements Serializable {
 
+    private String accountId;
+    private String roleId;
 
+    public AccountIdRoleId(String accountID, String roleID) {
+        this.accountId = accountID;
+        this.roleId = roleID;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AccountIdRoleId that = (AccountIdRoleId) o;
+        return accountId.equals(that.accountId) &&
+                roleId.equals(that.roleId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accountId, roleId);
+    }
 }
