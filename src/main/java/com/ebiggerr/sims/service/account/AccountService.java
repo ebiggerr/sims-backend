@@ -79,8 +79,10 @@ public class AccountService {
         // extract abc as the username of the account
         username = username.split("@")[0];
 
-        String latestId=accountRepo.getMaxId();
-        String newId= IdService.idIncrement(latestId);
+        String latestId=accountRepo.getMaxId(); //Not a good practice
+        String newId= IdService.idIncrement(latestId); //Not a good practice
+
+        //@Deprecated
         //accountRepo.insertANewRecordInTheAccountAuthenticationTableInTheDatabaseWithPendingAccountStatusAsDefault(newID,username,password,email);
 
         AccountEntity newAccount = new AccountEntity();

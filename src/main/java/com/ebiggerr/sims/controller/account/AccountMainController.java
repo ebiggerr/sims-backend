@@ -68,8 +68,6 @@ public class AccountMainController {
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
 
-    private boolean passwordMatch;
-
     //constructor dependency injection
     //@Autowired
     public AccountMainController(AuthenticationManager authenticationManager, Token_Provider tokenProvider, AccountService accountService, AccountAuthenticationService accountAuthenticationService) {
@@ -143,15 +141,15 @@ public class AccountMainController {
         String message="Something Went Wrong";
 
         if ( InputCheckValid.checkEmail( credentials.getUsername()) ) {
-            if ( accountService.registerAccount( credentials.getUsername(), encodedPasswordFromRegisterRequest ) ) return new API_Response().Success();
+            if ( accountService.registerAccount( credentials.getUsername(), encodedPasswordFromRegisterRequest ) ) return new API_Response().Success(); //successful registration
             else{
                 message = "Duplicates";
             }
         }
-        else{ return new API_Response().Failed("Invalid Email Address");
+        else{ return new API_Response().Failed("Invalid Email Address"); //If the email address does not pass the regex validation
         }
 
-        return new API_Response().Failed(message);
+        return new API_Response().Failed(message); //Meaningless message. ikr...
     }
 
     /**
