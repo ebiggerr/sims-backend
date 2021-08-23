@@ -22,6 +22,7 @@
 
 package com.ebiggerr.sims.service.inventory;
 
+import ch.qos.logback.classic.Logger;
 import com.ebiggerr.sims.domain.dashboard.Category;
 import com.ebiggerr.sims.domain.inventory.Item;
 import com.ebiggerr.sims.domain.inventory.ItemDTO;
@@ -65,7 +66,7 @@ public class InventoryService {
      * @return result of the operation , populated item if successful or null in the case of failure
      * @throws IOException IO exception if there is any error during the operation of writing image file from user request to the resource directory of the project
      */
-    public Item addNewItemImage(ItemWithImageRequest item) throws IOException {
+    public Item addNewItemImage(ItemWithImageRequest item) throws IOException, CustomException {
 
             int id = inventoryRepo.getMaxID();
 
@@ -80,10 +81,16 @@ public class InventoryService {
                     categoryID = categoryIDOptional.get();
                 }
                 else{
-                    return null;
+                    throw new CustomException("No Category found with the given ID.");
                 }
 
-                String imagePath = ImageUpload.saveUploadFile(item.getImage(), item.getSKU());
+                String imagePath = "";
+
+                try{
+                    imagePath = ImageUpload.saveUploadFile(item.getImage(), item.getSKU());
+                }catch (IOException exception){
+                    throw new IOException(exception.getMessage());
+                }
 
                 try {
                     Item itemEntity = new Item(
