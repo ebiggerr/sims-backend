@@ -36,12 +36,6 @@ public interface CategoryRepo extends JpaRepository<Category,Long> {
     @Query(value="select listing.categoryid,category.categoryname, count(listing.categoryid) as value from itemlisting listing join itemcategory category ON listing.categoryid = category.categoryid group by listing.categoryid, category.categoryname order by listing.categoryid asc" ,nativeQuery=true)
     List<Category> getCategoricalAnalytics();
 
-    @Query(value="select category.categoryname, count(listing.categoryid) as value from itemlisting listing join itemcategory category ON listing.categoryid = category.categoryid group by listing.categoryid, category.categoryname order by listing.categoryid asc" ,nativeQuery=true)
-    List<Category> getCategoricalAnalyticsA();
-
-    @Query(value="SELECT categoryid FROM itemcategory WHERE categoryname=?1 ", nativeQuery=true)
-    int getCategoryIdByName(String categoryName);
-
     @Query(value="SELECT categoryid FROM itemcategory WHERE categoryname=?1 ", nativeQuery=true)
     Optional<Integer> getCategoryIdByNameOptional(String categoryName);
 

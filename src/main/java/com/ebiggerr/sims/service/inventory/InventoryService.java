@@ -22,11 +22,13 @@
 
 package com.ebiggerr.sims.service.inventory;
 
+import ch.qos.logback.classic.Logger;
 import com.ebiggerr.sims.domain.dashboard.Category;
 import com.ebiggerr.sims.domain.inventory.Item;
 import com.ebiggerr.sims.domain.inventory.ItemDTO;
 import com.ebiggerr.sims.domain.request.ItemWithImageRequest;
 import com.ebiggerr.sims.domain.response.Inventory;
+import com.ebiggerr.sims.exception.CustomException;
 import com.ebiggerr.sims.mapper.InventoryConverter;
 import com.ebiggerr.sims.repository.CategoryRepo;
 import com.ebiggerr.sims.repository.InventoryRepo;
@@ -64,7 +66,7 @@ public class InventoryService {
      * @return result of the operation , populated item if successful or null in the case of failure
      * @throws IOException IO exception if there is any error during the operation of writing image file from user request to the resource directory of the project
      */
-    public Item addNewItemImage(ItemWithImageRequest item) throws IOException {
+    public Item addNewItemImage(ItemWithImageRequest item) throws IOException, CustomException {
 
             int id = inventoryRepo.getMaxID();
 
@@ -73,17 +75,22 @@ public class InventoryService {
             if( findDuplicates.isEmpty() ) {
 
                 Item repoItem = new Item();
-                //TODO use Optional
                 Optional<Integer> categoryIDOptional = categoryRepo.getCategoryIdByNameOptional( item.getCategoryName() );
                 long categoryID;
                 if( categoryIDOptional.isPresent() ) {
                     categoryID = categoryIDOptional.get();
                 }
                 else{
-                    return null;
+                    throw new CustomException("No Category found with the given ID.");
                 }
 
-                String imagePath = ImageUpload.saveUploadFile(item.getImage(), item.getSKU());
+                String imagePath = "";
+
+                try{
+                    imagePath = ImageUpload.saveUploadFile(item.getImage(), item.getSKU());
+                }catch (IOException exception){
+                    throw new IOException(exception.getMessage());
+                }
 
                 try {
                     Item itemEntity = new Item(
@@ -229,7 +236,7 @@ public class InventoryService {
      * @param categoryID id of the category
      * @return [inventory] result wrapped in together with the current page index and total pages available
      */
-    public Inventory getItemsByCategoryWithPageAndSize(int pageNumber, int pageSize, String categoryName, String categoryID){
+    public Inventory getItemsByCategoryWithPageAndSize(int pageNumber, int pageSize, String categoryName, String categoryID) throws CustomException {
 
         if( pageNumber == 0 || pageNumber < 0 ) pageNumber = DEFAULT_FIRST_PAGE;
         if( pageSize == 0 || pageSize <0 ) pageSize= DEFAULT_PAGE_SIZE;
@@ -239,8 +246,16 @@ public class InventoryService {
         categoryId = Integer.parseInt(categoryID);
 
         if( categoryId == 0 ){
-
-            categoryId = categoryRepo.getCategoryIdByName(categoryName);
+            Optional<Integer> categoryIdOptional = categoryRepo.getCategoryIdByNameOptional(categoryName);
+            if( categoryIdOptional.isPresent()){
+                categoryId = categoryIdOptional.get();
+            }
+            else{
+                throw new CustomException("No Category found with the given ID.");
+            }
+        }
+        else{
+            throw new CustomException("No Category found with the given ID.");
         }
 
         PageRequest pageRequest=PageRequest.of(pageNumber-1,pageSize, Sort.by("itemid").ascending() );

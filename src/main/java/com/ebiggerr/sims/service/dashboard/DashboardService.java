@@ -46,7 +46,7 @@ public class DashboardService {
      */
     public Dashboard getAnalytics(){
 
-        return new Dashboard( categoryRepo.getCategoricalAnalytics(), totalassetsRepo.gettotalassets() );
+        return new Dashboard( categoryRepo.getCategoricalAnalytics(), totalassetsRepo.GetTheTotalAmountOfAllActiveAssetsInTheInventory() );
 
     }
 }

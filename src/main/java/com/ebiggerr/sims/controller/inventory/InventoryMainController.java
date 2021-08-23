@@ -29,6 +29,7 @@ import com.ebiggerr.sims.domain.request.ItemWithImageRequest;
 import com.ebiggerr.sims.domain.response.API_Response;
 import com.ebiggerr.sims.domain.response.DemandResult;
 import com.ebiggerr.sims.domain.stock.Stock;
+import com.ebiggerr.sims.exception.CustomException;
 import com.ebiggerr.sims.service.DemandService;
 import com.ebiggerr.sims.service.input.InputCheckValid;
 import com.ebiggerr.sims.service.inventory.InventoryService;
@@ -84,7 +85,7 @@ public class InventoryMainController {
      */
     @PreAuthorize("hasAnyAuthority('Admin','Manager','Staff')")
     @GetMapping(path="/inventory/all/categorical")
-    public API_Response getFromInventoryByCategory(@RequestParam(name ="pagenumber")int pageNumber, @RequestParam( name="pagesize")int pageSize, @RequestParam(name = "category", required = false) String categoryName, @RequestParam(name="categoryid") String categoryID){
+    public API_Response getFromInventoryByCategory(@RequestParam(name ="pagenumber")int pageNumber, @RequestParam( name="pagesize")int pageSize, @RequestParam(name = "category", required = false) String categoryName, @RequestParam(name="categoryid") String categoryID) throws CustomException {
 
         return new API_Response().Success(
                 inventoryService.getItemsByCategoryWithPageAndSize(pageNumber, pageSize, categoryName, categoryID)
@@ -177,14 +178,19 @@ public class InventoryMainController {
 
     @PreAuthorize("hasAnyAuthority('Admin','Manager')")
     @PostMapping(path ="/inventory/itemWithImage")
-    public API_Response addNewItemWithImage( @Valid @ModelAttribute(value = "itemWithImageRequest") ItemWithImageRequest item) throws IOException {
+    public API_Response addNewItemWithImage( @Valid @ModelAttribute(value = "itemWithImageRequest") ItemWithImageRequest item) {
 
         message = InputCheckValid.checkAllForItem(item);
 
         Item response = null;
         if( message == null ){
-             response = inventoryService.addNewItemImage(item);
-             if( response == null ) return new API_Response().Failed("Duplicates in SKU");
+
+            try {
+                response = inventoryService.addNewItemImage(item);
+                if (response == null) return new API_Response().Failed("Duplicates in SKU");
+            }catch (Exception exception){
+                return new API_Response().Failed(exception.getMessage()); 
+            }
 
         }
 

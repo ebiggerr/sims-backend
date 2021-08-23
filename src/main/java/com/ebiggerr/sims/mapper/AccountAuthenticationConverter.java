@@ -79,11 +79,12 @@ public class AccountAuthenticationConverter {
      */
     public List<AccountAuthenticationDTO> entitiesToDTO(List<AccountAuthentication> accList ){
 
-        List<AccountAuthenticationDTO> list=new LinkedList<>();
+        //@Deprecated
+        /*List<AccountAuthenticationDTO> list=new LinkedList<>();
 
         for( int index=0; index< accList.size(); index++){
             list.add( this.entityToDTO( accList.get(index) ) );
-        }
+        }*/
 
         return accList.stream().map(this::entityToDTO).collect(Collectors.toList());
 

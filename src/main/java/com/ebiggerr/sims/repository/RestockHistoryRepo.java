@@ -29,6 +29,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Repository
@@ -38,5 +39,11 @@ public interface RestockHistoryRepo extends JpaRepository<RestockHistory,Long> {
     @Transactional
     @Query(value=" INSERT INTO restockhistory (itemid,quantity,restocktime) VALUES (?1,?2,?3)", nativeQuery=true)
     void addNewHistory(Long itemid, int quantity, LocalDateTime restockTime);
+
+    @Modifying
+    @Transactional
+    @Query(value="INSERT INTO restockhistory (itemid,quantity,restocktime,accountid) VALUES( ?1,?2,?3, (SELECT accountauthentication.accountid FROM accountauthentication WHERE accountusername=?4 ) );", nativeQuery=true)
+    void addNewRestockHistoryWithAccountId(Long itemid, int quantity, LocalDateTime restockTimestamp, String accountUsername);
+    //TODO not yet do the unit testing for this query
 
 }

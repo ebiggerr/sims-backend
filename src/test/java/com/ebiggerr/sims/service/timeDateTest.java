@@ -32,7 +32,7 @@ class timeDateTest {
 
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
-        System.out.println(timeDate.convertFromTimeStamp(timestamp));
+        // System.out.println(TimeDate.convertFromTimeStamp(timestamp));
 
         //System.out.println(date);
 
@@ -47,7 +47,7 @@ class timeDateTest {
         System.out.println(unixTime);
         System.out.println(ut1);
 
-        System.out.println(timeDate.convertFromUnixTimeStamp(ut1));
+        // System.out.println(timeDate.convertFromUnixTimeStamp(ut1));
 
 
 

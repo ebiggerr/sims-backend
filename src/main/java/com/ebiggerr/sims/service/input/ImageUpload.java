@@ -48,18 +48,23 @@ public class ImageUpload {
 
         if( !file.isEmpty() ){
 
-            //String[] format = file.getOriginalFilename().split(".");
-            extension = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
+            try {
+                //String[] format = file.getOriginalFilename().split(".");
+                extension = Objects.requireNonNull(file.getOriginalFilename()).split("\\.")[1];
 
-            filename = filename+ "."+ extension;
+                filename = filename + "." + extension;
 
-            //normal size
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(UPLOADED_FOLDER + filename);
-            Files.write(path, bytes);
+                //normal size
+                byte[] bytes = file.getBytes();
+                Path path = Paths.get(UPLOADED_FOLDER + filename);
+                Files.write(path, bytes);
 
-            //thumbnail size
-            //TODO thumbnail resize
+                //thumbnail size
+                //TODO thumbnail resize
+
+            }catch (Exception exception){
+                throw new IOException(exception.getMessage());
+            }
 
         }
 

@@ -17,7 +17,7 @@
 
 package com.ebiggerr.sims.service;
 
-import com.ebiggerr.sims.service.DoubleExponentialSmoothing.demandForecasting;
+import com.ebiggerr.sims.service.DoubleExponentialSmoothing.DemandForecasting;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -30,7 +30,7 @@ class demandForecastingTest {
         double[] testData = {17.55, 21.86, 23.89, 26.93, 26.89, 28.83, 30.08, 30.95, 30.19, 31.58, 32.58, 33.48, 39.02, 41.39, 41.60};
         int forecast_size=3;
 
-        demandForecasting d=new demandForecasting();
+        DemandForecasting d=new DemandForecasting();
         double[]result=d.exponentialSmoothing_TimeSeries(testData,forecast_size);
 
         System.out.println( Arrays.toString(result) ) ;
