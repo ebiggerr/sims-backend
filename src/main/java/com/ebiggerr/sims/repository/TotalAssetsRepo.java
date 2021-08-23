@@ -28,7 +28,11 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface TotalAssetsRepo extends JpaRepository<TotalAssets,String> {
 
-
+    /**
+     * Planning update - adding more fields as the filters in the query
+     *
+     * @return the total amount of all active assets in the inventory
+     */
     @Query(value="SELECT SUM( stock.quantitycount * listing.itemunitprice ) AS totalassets FROM itemlisting listing join inventorystock stock on listing.itemid = stock.itemid",nativeQuery=true)
-    String gettotalassets();
+    String GetTheTotalAmountOfAllActiveAssetsInTheInventory();
 }
